@@ -1,32 +1,62 @@
+@{
+    Layout = "~/Views/Shared/_BlankLayout.cshtml";
+    ViewData["Title"] = "Register";
+}
 
+<section class="auth-panel register-panel">
+    <div class="auth-panel-copy">
+        <a class="auth-brand" asp-controller="BookCatalog" asp-action="Index">Book'ed</a>
+        <p class="auth-eyebrow">Join The Shelf</p>
+        <h1>เริ่มต้นบัญชีใหม่ เพื่อเก็บหนังสือที่ใช่ไว้ในมุมของคุณ</h1>
+        <p class="auth-description">
+            ร้านหนังสือมือสองที่คัดเล่มน่าอ่านไว้ให้แล้ว ทั้งสำหรับตามหาเล่มโปรด ขายต่อเล่มที่รัก
+            และสร้างชั้นหนังสือใหม่ในสไตล์ของตัวเอง
+        </p>
 
-<div class="container">
-    <h2>Register</h2>
-    <form>
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter username">
+        <div class="auth-copy-card">
+            <span>Why Book'ed</span>
+            <p>ค้นหาง่ายหลายหมวด สะอาดตา และพร้อมต่อยอดเป็น flow สมัครสมาชิกจริงในขั้นถัดไป</p>
         </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter email">
+    </div>
+
+    <div class="auth-form-card">
+        <div class="auth-form-header">
+            <p class="auth-form-kicker">Create Account</p>
+            <h2>สมัครสมาชิก</h2>
         </div>
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Enter password">
-        </div>
-        <div class="form-group">
-            <label for="confirmPassword">Confirm Password</label>
-            <input type="password" class="form-control" id="confirmPassword" placeholder="Enter password">
-        </div>
-        <div class="form-group">
-            <label for="displayName">Display name</label>
-            <input type="text" class="form-control" id="displayName" placeholder="Enter display name">
-        </div>
-        <div class="form-group">
-            <label for="phone">Phone Number</label>
-            <input type="text" class="form-control" id="phone" placeholder="Enter phone number">
-        </div>
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
-</div>
+
+        <form class="auth-form-grid">
+            <div class="auth-field">
+                <label for="username">Username</label>
+                <input type="text" id="username" class="form-control auth-input" placeholder="ตั้งชื่อผู้ใช้">
+            </div>
+
+            <div class="auth-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control auth-input" placeholder="name@example.com">
+            </div>
+
+            <div class="auth-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control auth-input" placeholder="อย่างน้อย 8 ตัวอักษร">
+            </div>
+
+            <div class="auth-field">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" class="form-control auth-input" placeholder="ยืนยันรหัสผ่าน">
+            </div>
+
+            <div class="auth-field">
+                <label for="displayName">Display Name</label>
+                <input type="text" id="displayName" class="form-control auth-input" placeholder="ชื่อที่จะแสดงในระบบ">
+            </div>
+
+            <div class="auth-field">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" class="form-control auth-input" placeholder="08x-xxx-xxxx">
+            </div>
+
+            <button type="submit" class="auth-submit-button">สร้างบัญชี</button>
+        </form>
+    </div>
+</section>

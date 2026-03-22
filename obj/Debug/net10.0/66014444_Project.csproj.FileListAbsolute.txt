@@ -96,4 +96,4 @@ D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net10.0\ref\66014444_Project.dll
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net10.0\66014444_Project.sourcelink.json
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net10.0\compressed\kj4czplobm-{0}-ar021256gj-ar021256gj.gz
-D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net10.0\compressed\nql8xx78zu-{0}-9jyortnvst-9jyortnvst.gz
+D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net10.0\compressed\nql8xx78zu-{0}-c28iipx2zn-c28iipx2zn.gz
