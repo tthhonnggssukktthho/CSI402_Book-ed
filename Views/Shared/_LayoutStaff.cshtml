@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Book'ed Staff</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/_66014444_Project.styles.css" asp-append-version="true" />
+</head>
+<body class="admin-shell">
+    <div class="admin-overlay" data-admin-overlay></div>
+
+    <nav class="admin-topbar navbar fixed-top px-3 px-lg-4">
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn admin-icon-btn" data-admin-sidebar-toggle aria-label="Toggle sidebar">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <a class="admin-brand text-decoration-none" asp-controller="Admin" asp-action="Dashboard">
+                <span class="admin-brand-mark">B</span>
+                <span class="admin-brand-text">
+                    <strong>Book'ed</strong>
+                    <small>Staff dashboard</small>
+                </span>
+            </a>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 gap-lg-3">
+            <button type="button" class="btn admin-notify-btn position-relative">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3H4a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6" />
+                    <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+                </svg>
+                <span class="admin-notify-badge">3</span>
+            </button>
+
+            <div class="admin-profile">
+                <div class="admin-avatar">ST</div>
+                <div class="d-none d-sm-block">
+                    <strong>Staff Team</strong>
+                    <small>Back office</small>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <aside class="admin-sidebar" data-admin-sidebar>
+        <div class="admin-sidebar-header">
+            <p class="mb-1 admin-sidebar-title">Navigation</p>
+            <p class="mb-0 admin-sidebar-subtitle">Internal workspace for admin and staff operations</p>
+        </div>
+
+        <div class="admin-nav-section">
+            <small class="admin-nav-caption">Admin</small>
+            <a class="admin-nav-link" asp-controller="Admin" asp-action="Dashboard">
+                <span class="admin-nav-icon">D</span>
+                <span>Dashboard</span>
+            </a>
+            <a class="admin-nav-link" asp-controller="Admin" asp-action="CustomerList">
+                <span class="admin-nav-icon">C</span>
+                <span>Customers</span>
+            </a>
+            <a class="admin-nav-link" asp-controller="Admin" asp-action="EmployeeList">
+                <span class="admin-nav-icon">E</span>
+                <span>Employees</span>
+            </a>
+            <a class="admin-nav-link" asp-controller="Admin" asp-action="EmployeeCreate">
+                <span class="admin-nav-icon">A</span>
+                <span>Add Employee</span>
+            </a>
+        </div>
+
+        <div class="admin-nav-section">
+            <small class="admin-nav-caption">Staff Roles</small>
+            <a class="admin-nav-link" href="#">
+                <span class="admin-nav-icon">P</span>
+                <span>Appraisal Queue</span>
+            </a>
+            <a class="admin-nav-link" href="#">
+                <span class="admin-nav-icon">$</span>
+                <span>Finance Queue</span>
+            </a>
+            <a class="admin-nav-link" href="#">
+                <span class="admin-nav-icon">S</span>
+                <span>Shipping Queue</span>
+            </a>
+        </div>
+
+        <div class="admin-nav-section">
+            <small class="admin-nav-caption">Account</small>
+            <a class="admin-nav-link" asp-controller="BookCatalog" asp-action="Index">
+                <span class="admin-nav-icon">H</span>
+                <span>Back to Shop</span>
+            </a>
+            <a class="admin-nav-link" asp-controller="Account" asp-action="Login">
+                <span class="admin-nav-icon">L</span>
+                <span>Log in</span>
+            </a>
+            <a class="admin-nav-link" asp-controller="Account" asp-action="Register">
+                <span class="admin-nav-icon">S</span>
+                <span>Sign up</span>
+            </a>
+        </div>
+
+        <div class="admin-sidebar-card section-highlight">
+            <p class="mb-1 fw-bold text-brown">Store health</p>
+            <p class="mb-0 small text-dark">Orders are stable and approval tasks are concentrated in the afternoon shift.</p>
+        </div>
+    </aside>
+
+    <main class="admin-content">
+        <div class="container-fluid px-3 px-lg-4">
+            @RenderBody()
+
+            <footer class="admin-footer">
+                <p class="mb-0">Book'ed Staff Panel using the shared dashboard layout for internal operations.</p>
+            </footer>
+        </div>
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        (() => {
+            const sidebar = document.querySelector("[data-admin-sidebar]");
+            const overlay = document.querySelector("[data-admin-overlay]");
+            const toggleButtons = document.querySelectorAll("[data-admin-sidebar-toggle]");
+            if (!sidebar || !overlay || !toggleButtons.length) {
+                return;
+            }
+
+            const toggleSidebar = () => {
+                document.body.classList.toggle("admin-sidebar-open");
+            };
+
+            toggleButtons.forEach(button => button.addEventListener("click", toggleSidebar));
+            overlay.addEventListener("click", () => document.body.classList.remove("admin-sidebar-open"));
+            window.addEventListener("resize", () => {
+                if (window.innerWidth >= 992) {
+                    document.body.classList.remove("admin-sidebar-open");
+                }
+            });
+        })();
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
