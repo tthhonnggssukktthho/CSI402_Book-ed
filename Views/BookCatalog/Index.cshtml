@@ -1,0 +1,94 @@
+@{
+    ViewData["Title"] = "Book Catalog";
+
+    var books = new[]
+    {
+        new { CoverTone = "cover-romance", Badge = "เหมือนใหม่", Title = "Love Notes in the Rain", Author = "Mali Saelim", Category = "โรแมนซ์", Price = "245", Detail = "เล่มอ่านครั้งเดียว ปกใสครบ มุมสวย" },
+        new { CoverTone = "cover-horror", Badge = "สภาพดี", Title = "The Last Whispering House", Author = "K. Narin", Category = "สยองขวัญ", Price = "210", Detail = "กระดาษขาวสะอาด มีรอยสันจางเล็กน้อย" },
+        new { CoverTone = "cover-fantasy", Badge = "ชุดแนะนำ", Title = "Ashes of the Moon Kingdom", Author = "Ploy Chantara", Category = "แฟนตาซี", Price = "320", Detail = "งานปกสวย สีสด พร้อมสะสมต่อในชุด" },
+        new { CoverTone = "cover-y", Badge = "ขายดี", Title = "Blue Hour Confession", Author = "Mira Sunday", Category = "วาย/ยูริ", Price = "265", Detail = "สภาพดีมาก มีที่คั่นและปกแจ็กเก็ตครบ" },
+        new { CoverTone = "cover-mystery", Badge = "แนะนำ", Title = "Murder at Lantern Pier", Author = "Than Pitcha", Category = "สืบสวน", Price = "280", Detail = "หน้ากระดาษสะอาด อ่านลื่น เหมาะกับสายสืบสวน" },
+        new { CoverTone = "cover-romance", Badge = "ราคาดี", Title = "After Sunset, We Stay", Author = "Napat B.", Category = "โรแมนซ์", Price = "190", Detail = "มีรอยใช้งานเล็กน้อย แต่เนื้อในสมบูรณ์" }
+    };
+}
+
+<section class="catalog-page">
+    <div class="catalog-heading">
+        <div>
+            <p class="catalog-kicker">Book Catalog</p>
+            <h1>ชั้นหนังสือของร้าน Book'ed</h1>
+            <p class="catalog-subtitle">รวมหนังสือมือสองพร้อมขาย แสดงสินค้าแบบ 3 คอลัมน์ พร้อมตัวกรองทางซ้ายสำหรับค่อย ๆ ต่อระบบในส่วนถัดไป</p>
+        </div>
+        <div class="catalog-summary">
+            <strong>126</strong>
+            <span>สินค้าพร้อมขาย</span>
+        </div>
+    </div>
+
+    <div class="catalog-layout">
+        <aside class="catalog-sidebar">
+            <div class="filter-card">
+                <h2>กรองสินค้า</h2>
+                <div class="filter-group">
+                    <span class="filter-label">หมวดหมู่</span>
+                    <label><input type="checkbox" checked /> ทั้งหมด</label>
+                    <label><input type="checkbox" /> โรแมนซ์</label>
+                    <label><input type="checkbox" /> สยองขวัญ</label>
+                    <label><input type="checkbox" /> แฟนตาซี</label>
+                    <label><input type="checkbox" /> วาย/ยูริ</label>
+                    <label><input type="checkbox" /> สืบสวน</label>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">สภาพหนังสือ</span>
+                    <label><input type="checkbox" checked /> เหมือนใหม่</label>
+                    <label><input type="checkbox" /> สภาพดี</label>
+                    <label><input type="checkbox" /> มีตำหนิเล็กน้อย</label>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">ช่วงราคา</span>
+                    <label><input type="radio" name="priceRange" checked /> ทั้งหมด</label>
+                    <label><input type="radio" name="priceRange" /> ต่ำกว่า 200 บาท</label>
+                    <label><input type="radio" name="priceRange" /> 200 - 300 บาท</label>
+                    <label><input type="radio" name="priceRange" /> มากกว่า 300 บาท</label>
+                </div>
+
+                <button type="button" class="filter-apply-button">ใช้ตัวกรอง</button>
+            </div>
+        </aside>
+
+        <div class="catalog-content">
+            <div class="catalog-toolbar">
+                <p>แสดงผล 1-6 จาก 126 รายการ</p>
+                <div class="catalog-toolbar-controls">
+                    <label for="sortBy">เรียงตาม</label>
+                    <select id="sortBy">
+                        <option>แนะนำสำหรับคุณ</option>
+                        <option>ราคาต่ำไปสูง</option>
+                        <option>ราคาสูงไปต่ำ</option>
+                        <option>มาใหม่ล่าสุด</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="catalog-grid">
+                @foreach (var book in books)
+                {
+                    @await Html.PartialAsync(
+                        "_Bookcard",
+                        new ViewDataDictionary(ViewData)
+                        {
+                            ["CoverTone"] = book.CoverTone,
+                            ["Badge"] = book.Badge,
+                            ["Title"] = book.Title,
+                            ["Author"] = book.Author,
+                            ["Category"] = book.Category,
+                            ["Price"] = book.Price,
+                            ["Detail"] = book.Detail
+                        })
+                }
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,37 @@
+@{
+    var coverTone = ViewData["CoverTone"] as string ?? "cover-romance";
+    var badgeText = ViewData["Badge"] as string ?? "สภาพดี";
+    var title = ViewData["Title"] as string ?? "Midnight on Paper Street";
+    var author = ViewData["Author"] as string ?? "Rin Watanabe";
+    var category = ViewData["Category"] as string ?? "แฟนตาซี";
+    var price = ViewData["Price"] as string ?? "220";
+    var detail = ViewData["Detail"] as string ?? "มีตำหนิเล็กน้อยที่สัน แต่หน้ากระดาษสะอาด";
+}
+
+<article class="book-card">
+    <div class="book-card-cover @coverTone">
+        <span class="book-card-badge">@badgeText</span>
+        <div class="book-card-cover-art">
+            <span>Book'ed</span>
+        </div>
+    </div>
+
+    <div class="book-card-body">
+        <div class="book-card-meta">
+            <span class="book-card-category">@category</span>
+            <span class="book-card-stock">พร้อมขาย</span>
+        </div>
+
+        <h3 class="book-card-title">@title</h3>
+        <p class="book-card-author">โดย @author</p>
+        <p class="book-card-detail">@detail</p>
+
+        <div class="book-card-footer">
+            <div>
+                <span class="book-card-price-label">ราคา</span>
+                <strong class="book-card-price">฿@price</strong>
+            </div>
+            <a class="book-card-button" href="#">ดูรายละเอียด</a>
+        </div>
+    </div>
+</article>
