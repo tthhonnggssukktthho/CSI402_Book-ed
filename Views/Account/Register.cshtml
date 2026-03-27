@@ -1,3 +1,4 @@
+@model _66014444_Project.ViewModels.RegisterViewModel
 @{
     Layout = "~/Views/Shared/_BlankLayout.cshtml";
     ViewData["Title"] = "Register";
@@ -7,56 +8,69 @@
     <div class="auth-panel-copy">
         <a class="auth-brand" asp-controller="BookCatalog" asp-action="Index">Book'ed</a>
         <p class="auth-eyebrow">Join The Shelf</p>
-        <h1>เริ่มต้นบัญชีใหม่ เพื่อเก็บหนังสือที่ใช่ไว้ในมุมของคุณ</h1>
+        <h1>Create a new account and start building your own reading corner.</h1>
         <p class="auth-description">
-            ร้านหนังสือมือสองที่คัดเล่มน่าอ่านไว้ให้แล้ว ทั้งสำหรับตามหาเล่มโปรด ขายต่อเล่มที่รัก
-            และสร้างชั้นหนังสือใหม่ในสไตล์ของตัวเอง
+            Register as a customer to keep track of your account, save your profile information,
+            and continue with the rest of the bookstore flow.
         </p>
 
         <div class="auth-copy-card">
             <span>Why Book'ed</span>
-            <p>ค้นหาง่ายหลายหมวด สะอาดตา และพร้อมต่อยอดเป็น flow สมัครสมาชิกจริงในขั้นถัดไป</p>
+            <p>Your registration data will now be saved to the database and shown in the customer list for admin management.</p>
         </div>
     </div>
 
     <div class="auth-form-card">
         <div class="auth-form-header">
             <p class="auth-form-kicker">Create Account</p>
-            <h2>สมัครสมาชิก</h2>
+            <h2>Register</h2>
         </div>
 
-        <form class="auth-form-grid">
+        <form asp-action="Register" asp-controller="Account" method="post" class="auth-form-grid">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="auth-field">
-                <label for="username">Username</label>
-                <input type="text" id="username" class="form-control auth-input" placeholder="ตั้งชื่อผู้ใช้">
+                <label asp-for="Username"></label>
+                <input asp-for="Username" class="form-control auth-input" placeholder="Choose a username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
             </div>
 
             <div class="auth-field">
-                <label for="email">Email</label>
-                <input type="email" id="email" class="form-control auth-input" placeholder="name@example.com">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" class="form-control auth-input" placeholder="name@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="auth-field">
-                <label for="password">Password</label>
-                <input type="password" id="password" class="form-control auth-input" placeholder="อย่างน้อย 8 ตัวอักษร">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" class="form-control auth-input" placeholder="At least 6 characters" />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
             <div class="auth-field">
-                <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" class="form-control auth-input" placeholder="ยืนยันรหัสผ่าน">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" class="form-control auth-input" placeholder="Confirm your password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
             </div>
 
             <div class="auth-field">
-                <label for="displayName">Display Name</label>
-                <input type="text" id="displayName" class="form-control auth-input" placeholder="ชื่อที่จะแสดงในระบบ">
+                <label asp-for="DisplayName"></label>
+                <input asp-for="DisplayName" class="form-control auth-input" placeholder="Display name in the system" />
+                <span asp-validation-for="DisplayName" class="text-danger"></span>
             </div>
 
             <div class="auth-field">
-                <label for="phone">Phone Number</label>
-                <input type="text" id="phone" class="form-control auth-input" placeholder="08x-xxx-xxxx">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" class="form-control auth-input" placeholder="08x-xxx-xxxx" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
             </div>
 
-            <button type="submit" class="auth-submit-button">สร้างบัญชี</button>
+            <button type="submit" class="auth-submit-button">Create Account</button>
         </form>
     </div>
 </section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
