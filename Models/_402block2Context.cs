@@ -326,6 +326,11 @@ public partial class _402block2Context : DbContext
                 .HasColumnName("full_name")
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
+            entity.Property(e => e.Role)
+                .HasMaxLength(20)
+                .HasColumnName("role")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
             entity.Property(e => e.HireDate).HasColumnName("hire_date");
             entity.Property(e => e.PostalCode)
                 .HasMaxLength(10)

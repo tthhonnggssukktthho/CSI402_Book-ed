@@ -74,9 +74,20 @@ public class AccountController : Controller
         return RedirectToAction("CustomerList", "Admin");
     }
 
+    [HttpGet]
     public IActionResult Login()
     {
         return View();
+    }
+    [HttpPost]
+    public IActionResult Login(LoginViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        return RedirectToAction("Index", "BookCatalog");
     }
 
     public IActionResult AccessDenied()

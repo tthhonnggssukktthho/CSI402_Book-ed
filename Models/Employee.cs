@@ -13,6 +13,8 @@ public partial class Employee
 
     public string FullName { get; set; } = null!;
 
+    public string Role { get; set; } = null!;
+
     public DateOnly HireDate { get; set; }
 
     public DateOnly? ResignDate { get; set; }

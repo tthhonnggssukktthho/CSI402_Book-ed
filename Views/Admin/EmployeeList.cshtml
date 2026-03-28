@@ -1,12 +1,55 @@
+@model IEnumerable<_66014444_Project.Models.Employee>
 @{
     ViewData["Title"] = "Employee List";
     Layout = "_LayoutStaff";
 }
 
-<div class="container">
-    <h2>Employee List</h2>
-    <p>Here you can manage your employees.</p>
-    <table>
-        
-    </table>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Employee List</h2>
+            <p class="text-muted mb-0">All employee accounts currently stored in the system.</p>
+        </div>
+        <a asp-action="EmployeeCreate" asp-controller="Admin" class="btn btn-primary">Add Employee</a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Employee Code</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Hire Date</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Updated At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var employee in Model)
+                        {
+                            <tr>
+                                <td>@employee.EmployeeCode</td>
+                                <td>@employee.FullName</td>
+                                <td class="text-capitalize">@employee.Role</td>
+                                <td>@employee.User?.Username</td>
+                                <td>@employee.User?.Email</td>
+                                <td>@employee.User?.PhoneNumber</td>
+                                <td>@employee.HireDate.ToString("yyyy-MM-dd")</td>
+                                <td>@employee.EmploymentStatus</td>
+                                <td>@employee.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td>@employee.UpdatedAt.ToString("yyyy-MM-dd")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

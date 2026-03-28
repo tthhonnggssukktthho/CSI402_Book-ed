@@ -2,6 +2,7 @@
     ViewData["Title"] = "Login";
     Layout = "_BlankLayout";
 }
+@model _66014444_Project.ViewModels.LoginViewModel
 
 <section class="auth-panel auth-panel-login">
     <div class="auth-panel-copy">
@@ -27,12 +28,12 @@
         <form class="auth-form-grid auth-form-grid-single">
             <div class="auth-field">
                 <label for="email">Email</label>
-                <input type="email" class="form-control auth-input" id="email" placeholder="name@example.com">
+                <input asp-for="Email" type="email" class="form-control auth-input" id="email" placeholder="name@example.com">
             </div>
 
             <div class="auth-field">
                 <label for="password">Password</label>
-                <input type="password" class="form-control auth-input" id="password" placeholder="กรอกรหัสผ่าน">
+                <input asp-for="Password" type="password" class="form-control auth-input" id="password" placeholder="กรอกรหัสผ่าน">
             </div>
 
             <label class="auth-check-row" for="rememberMe">
