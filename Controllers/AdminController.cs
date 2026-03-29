@@ -32,24 +32,46 @@ public class AdminController : Controller
 
     public IActionResult CustomerDetails(int id)
     {
-        // You can retrieve customer details based on the provided id and pass it to the view
         return View();
     }
 
     public IActionResult EmployeeList()
     {
-        var employees = _db.Employees
-            .Include(e => e.User)
-            .OrderByDescending(e => e.CreatedAt)
-            .ToList();
+        var model = new AdminEmployeeListViewModel
+        {
+            Employees = _db.Employees
+                .Include(e => e.User)
+                .OrderByDescending(e => e.CreatedAt)
+                .Select(e => new AdminEmployeeItemViewModel
+                {
+                    EmployeeId = e.EmployeeId,
+                    EmployeeCode = e.EmployeeCode,
+                    FullName = e.FullName,
+                    Role = e.Role,
+                    EmploymentStatus = e.EmploymentStatus,
+                    HireDate = e.HireDate,
+                    ResignDate = e.ResignDate,
+                    Username = e.User.Username,
+                    Email = e.User.Email,
+                    PhoneNumber = e.User.PhoneNumber,
+                    Address1 = e.AddressLine1,
+                    Address2 = e.AddressLine2,
+                    Subdistrict = e.Subdistrict,
+                    District = e.District,
+                    Province = e.Province,
+                    PostalCode = e.PostalCode,
+                    CreatedAt = e.CreatedAt,
+                    UpdatedAt = e.UpdatedAt
+                })
+                .ToList()
+        };
 
-        return View(employees);
+        return View(model);
     }
 
     public IActionResult EmployeeCreate()
     {
-        var model = new AdminEmployeeFormViewModel();
-        return View(model);
+        return View(new AdminEmployeeFormViewModel());
     }
 
     [HttpPost]
@@ -74,6 +96,11 @@ public class AdminController : Controller
         if (!AdminEmployeeFormViewModel.EmployeeRoles.Contains(model.Role))
         {
             ModelState.AddModelError(nameof(model.Role), "Please select a valid role.");
+        }
+
+        if (!AdminEmployeeFormViewModel.EmploymentStatuses.Contains(model.EmploymentStatus))
+        {
+            ModelState.AddModelError(nameof(model.EmploymentStatus), "Please select a valid status.");
         }
 
         if (!ModelState.IsValid)
@@ -107,7 +134,14 @@ public class AdminController : Controller
             FullName = model.FullName,
             Role = model.Role,
             HireDate = model.HireDate,
-            EmploymentStatus = "active",
+            EmploymentStatus = model.EmploymentStatus,
+            AddressLine1 = model.Address1,
+            AddressLine2 = model.Address2,
+            Subdistrict = model.Subdistrict,
+            District = model.District,
+            Province = model.Province,
+            PostalCode = model.PostalCode,
+            ResignDate = model.EmploymentStatus == "resigned" ? model.ResignDate : null,
             CreatedAt = now,
             UpdatedAt = now
         };
@@ -118,7 +152,127 @@ public class AdminController : Controller
         return RedirectToAction(nameof(EmployeeList));
     }
 
-    private string GenerateEmployeeCode(string role)
+    public IActionResult EmployeeEdit(int id)
+    {
+        var employee = _db.Employees
+            .Include(e => e.User)
+            .FirstOrDefault(e => e.EmployeeId == id);
+
+        if (employee is null)
+        {
+            return NotFound();
+        }
+
+        var model = new AdminEmployeeFormViewModel
+        {
+            EmployeeId = employee.EmployeeId,
+            Username = employee.User.Username,
+            Email = employee.User.Email,
+            FullName = employee.FullName,
+            Role = employee.Role,
+            EmployeeCode = employee.EmployeeCode,
+            PhoneNumber = employee.User.PhoneNumber,
+            Address1 = employee.AddressLine1,
+            Address2 = employee.AddressLine2,
+            Subdistrict = employee.Subdistrict,
+            District = employee.District,
+            Province = employee.Province,
+            PostalCode = employee.PostalCode,
+            HireDate = employee.HireDate,
+            EmploymentStatus = employee.EmploymentStatus,
+            ResignDate = employee.ResignDate
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult EmployeeEdit(AdminEmployeeFormViewModel model)
+    {
+        if (!model.EmployeeId.HasValue)
+        {
+            return BadRequest();
+        }
+
+        var employee = _db.Employees
+            .Include(e => e.User)
+            .FirstOrDefault(e => e.EmployeeId == model.EmployeeId.Value);
+
+        if (employee is null)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            model.EmployeeCode = employee.EmployeeCode;
+            return View(model);
+        }
+
+        if (_db.Users.Any(u => u.UserId != employee.UserId && u.Username == model.Username))
+        {
+            ModelState.AddModelError(nameof(model.Username), "This username is already used.");
+        }
+
+        if (_db.Users.Any(u => u.UserId != employee.UserId && u.Email == model.Email))
+        {
+            ModelState.AddModelError(nameof(model.Email), "This email is already used.");
+        }
+
+        if (!AdminEmployeeFormViewModel.EmployeeRoles.Contains(model.Role))
+        {
+            ModelState.AddModelError(nameof(model.Role), "Please select a valid role.");
+        }
+
+        if (!AdminEmployeeFormViewModel.EmploymentStatuses.Contains(model.EmploymentStatus))
+        {
+            ModelState.AddModelError(nameof(model.EmploymentStatus), "Please select a valid status.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            model.EmployeeCode = employee.EmployeeCode;
+            return View(model);
+        }
+
+        var now = DateTime.Now;
+        var roleChanged = !string.Equals(employee.Role, model.Role, StringComparison.OrdinalIgnoreCase);
+
+        employee.User.Username = model.Username;
+        employee.User.Email = model.Email;
+        employee.User.PhoneNumber = model.PhoneNumber;
+        employee.User.UpdatedAt = now;
+
+        if (!string.IsNullOrWhiteSpace(model.Password))
+        {
+            employee.User.PasswordHash = model.Password;
+        }
+
+        employee.FullName = model.FullName;
+        employee.Role = model.Role;
+        employee.HireDate = model.HireDate;
+        employee.EmploymentStatus = model.EmploymentStatus;
+        employee.ResignDate = model.EmploymentStatus == "resigned" ? model.ResignDate : null;
+        employee.AddressLine1 = model.Address1;
+        employee.AddressLine2 = model.Address2;
+        employee.Subdistrict = model.Subdistrict;
+        employee.District = model.District;
+        employee.Province = model.Province;
+        employee.PostalCode = model.PostalCode;
+        employee.UpdatedAt = now;
+
+        if (roleChanged)
+        {
+            employee.EmployeeCode = GenerateEmployeeCode(model.Role, employee.EmployeeId);
+        }
+
+        _db.SaveChanges();
+
+        return RedirectToAction(nameof(EmployeeList));
+    }
+
+    private string GenerateEmployeeCode(string role, int? excludeEmployeeId = null)
     {
         var prefix = role.ToLower() switch
         {
@@ -130,7 +284,7 @@ public class AdminController : Controller
         };
 
         var latestCode = _db.Employees
-            .Where(e => e.Role == role)
+            .Where(e => e.Role == role && (!excludeEmployeeId.HasValue || e.EmployeeId != excludeEmployeeId.Value))
             .OrderByDescending(e => e.EmployeeId)
             .Select(e => e.EmployeeCode)
             .FirstOrDefault();
@@ -150,12 +304,6 @@ public class AdminController : Controller
         }
 
         return $"{prefix}{nextNumber:0000}";
-    }
-
-    public IActionResult EmployeeEdit()
-    {
-        
-        return View();
     }
 
     public IActionResult Privacy()

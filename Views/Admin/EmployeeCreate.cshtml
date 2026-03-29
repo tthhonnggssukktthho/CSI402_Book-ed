@@ -70,9 +70,62 @@
                         </div>
 
                         <div class="col-md-6">
+                            <label asp-for="Address1" class="form-label"></label>
+                            <input asp-for="Address1" class="form-control" />
+                            <span asp-validation-for="Address1" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Address2" class="form-label"></label>
+                            <input asp-for="Address2" class="form-control" />
+                            <span asp-validation-for="Address2" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Subdistrict" class="form-label"></label>
+                            <input asp-for="Subdistrict" class="form-control" />
+                            <span asp-validation-for="Subdistrict" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="District" class="form-label"></label>
+                            <input asp-for="District" class="form-control" />
+                            <span asp-validation-for="District" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Province" class="form-label"></label>
+                            <input asp-for="Province" class="form-control" />
+                            <span asp-validation-for="Province" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PostalCode" class="form-label"></label>
+                            <input asp-for="PostalCode" class="form-control" />
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
                             <label asp-for="HireDate" class="form-label"></label>
                             <input asp-for="HireDate" class="form-control" />
                             <span asp-validation-for="HireDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="EmploymentStatus" class="form-label"></label>
+                            <select asp-for="EmploymentStatus" class="form-select">
+                                @foreach (var status in _66014444_Project.ViewModels.Admin.AdminEmployeeFormViewModel.EmploymentStatuses)
+                                {
+                                    <option value="@status">@status</option>
+                                }
+                            </select>
+                            <span asp-validation-for="EmploymentStatus" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ResignDate" class="form-label"></label>
+                            <input asp-for="ResignDate" class="form-control" />
+                            <span asp-validation-for="ResignDate" class="text-danger"></span>
                         </div>
 
                         <div class="col-12">
