@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using _66014444_Project.Models;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using _66014444_Project.ViewModels.Admin;
 
 namespace _66014444_Project.Controllers;
 
+[Authorize(Policy = "StaffOnly")]
 public class AdminController : Controller
 {
     private readonly _402block2Context _db;
@@ -15,11 +17,13 @@ public class AdminController : Controller
         _db = db;
     }
 
+    [Authorize(Policy = "StaffOnly")]
     public IActionResult Dashboard()
     {
         return View();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult CustomerList()
     {
         var customers = _db.Customers
@@ -30,11 +34,13 @@ public class AdminController : Controller
         return View(customers);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult CustomerDetails(int id)
     {
         return View();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult EmployeeList()
     {
         var model = new AdminEmployeeListViewModel
@@ -69,12 +75,14 @@ public class AdminController : Controller
         return View(model);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult EmployeeCreate()
     {
         return View(new AdminEmployeeFormViewModel());
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     [ValidateAntiForgeryToken]
     public IActionResult EmployeeCreate(AdminEmployeeFormViewModel model)
     {
@@ -152,6 +160,7 @@ public class AdminController : Controller
         return RedirectToAction(nameof(EmployeeList));
     }
 
+    [Authorize(Policy = "AdminOnly")]
     public IActionResult EmployeeEdit(int id)
     {
         var employee = _db.Employees
@@ -187,6 +196,7 @@ public class AdminController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
     [ValidateAntiForgeryToken]
     public IActionResult EmployeeEdit(AdminEmployeeFormViewModel model)
     {

@@ -41,8 +41,8 @@
             <div class="admin-profile">
                 <div class="admin-avatar">ST</div>
                 <div class="d-none d-sm-block">
-                    <strong>Staff Team</strong>
-                    <small>Back office</small>
+                    <strong>@(User.Identity?.Name ?? "Staff Team")</strong>
+                    <small>@(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Back office")</small>
                 </div>
             </div>
         </div>
@@ -96,14 +96,27 @@
                 <span class="admin-nav-icon">H</span>
                 <span>Back to Shop</span>
             </a>
-            <a class="admin-nav-link" asp-controller="Account" asp-action="Login">
-                <span class="admin-nav-icon">L</span>
-                <span>Log in</span>
-            </a>
-            <a class="admin-nav-link" asp-controller="Account" asp-action="Register">
-                <span class="admin-nav-icon">S</span>
-                <span>Sign up</span>
-            </a>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="admin-nav-link w-100 text-start border-0 bg-transparent">
+                        <span class="admin-nav-icon">L</span>
+                        <span>Log out</span>
+                    </button>
+                </form>
+            }
+            else
+            {
+                <a class="admin-nav-link" asp-controller="Account" asp-action="Login">
+                    <span class="admin-nav-icon">L</span>
+                    <span>Log in</span>
+                </a>
+                <a class="admin-nav-link" asp-controller="Account" asp-action="Register">
+                    <span class="admin-nav-icon">S</span>
+                    <span>Sign up</span>
+                </a>
+            }
         </div>
 
         <div class="admin-sidebar-card section-highlight">

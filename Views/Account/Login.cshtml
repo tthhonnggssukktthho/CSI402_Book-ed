@@ -1,48 +1,58 @@
+@model _66014444_Project.ViewModels.LoginViewModel
 @{
     ViewData["Title"] = "Login";
     Layout = "_BlankLayout";
 }
-@model _66014444_Project.ViewModels.LoginViewModel
 
 <section class="auth-panel auth-panel-login">
     <div class="auth-panel-copy">
         <a class="auth-brand" asp-controller="BookCatalog" asp-action="Index">Book'ed</a>
         <p class="auth-eyebrow">Welcome Back</p>
-        <h1>กลับเข้าสู่ชั้นหนังสือของคุณ แล้วไปต่อกับเล่มที่กำลังตามหา</h1>
+        <h1>Sign in and continue your next chapter.</h1>
         <p class="auth-description">
-            เข้าสู่ระบบเพื่อดูคำสั่งซื้อ รายการหนังสือที่บันทึกไว้ และจัดการบัญชีของคุณในพื้นที่ที่เรียบง่ายสบายตา
+            Customers will be redirected to the catalog. Staff accounts will go straight to the dashboard for daily operations.
         </p>
 
         <div class="auth-copy-card">
-            <span>Your Next Chapter</span>
-            <p>ติดตามหนังสือที่สนใจ เช็กสถานะคำสั่งซื้อ และกลับมาเลือกเล่มใหม่ได้จากบัญชีเดิมของคุณ</p>
+            <span>One account, the right destination</span>
+            <p>Customer, admin, appraisal, finance and shipping accounts all use the same login form, then the system routes each role to the correct page automatically.</p>
         </div>
     </div>
 
     <div class="auth-form-card auth-form-card-login">
         <div class="auth-form-header">
             <p class="auth-form-kicker">Sign In</p>
-            <h2>เข้าสู่ระบบ</h2>
+            <h2>Login to your account</h2>
         </div>
 
-        <form class="auth-form-grid auth-form-grid-single">
+        <form asp-action="Login" asp-controller="Account" method="post" class="auth-form-grid auth-form-grid-single">
+            @Html.AntiForgeryToken()
+            <input asp-for="ReturnUrl" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="auth-field">
-                <label for="email">Email</label>
-                <input asp-for="Email" type="email" class="form-control auth-input" id="email" placeholder="name@example.com">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" type="email" class="form-control auth-input" placeholder="name@example.com" />
+                <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
             <div class="auth-field">
-                <label for="password">Password</label>
-                <input asp-for="Password" type="password" class="form-control auth-input" id="password" placeholder="กรอกรหัสผ่าน">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" class="form-control auth-input" placeholder="Enter your password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <label class="auth-check-row" for="rememberMe">
-                <input type="checkbox" id="rememberMe">
-                <span>จดจำการเข้าสู่ระบบ</span>
+            <label class="auth-check-row" asp-for="RememberMe">
+                <input asp-for="RememberMe" />
+                <span>Remember me</span>
             </label>
 
-            <button type="submit" class="auth-submit-button">เข้าสู่ระบบ</button>
+            <button type="submit" class="auth-submit-button">Sign In</button>
             <a class="auth-secondary-link" asp-controller="Account" asp-action="Register">ยังไม่มีบัญชี? สมัครสมาชิก</a>
         </form>
     </div>
 </section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

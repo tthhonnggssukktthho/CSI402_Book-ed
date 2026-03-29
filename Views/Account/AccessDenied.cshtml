@@ -1,0 +1,39 @@
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "_BlankLayout";
+}
+
+<section class="auth-panel auth-panel-login">
+    <div class="auth-panel-copy">
+        <a class="auth-brand" asp-controller="BookCatalog" asp-action="Index">Book'ed</a>
+        <p class="auth-eyebrow">Access Restricted</p>
+        <h1>This page is not available for your role.</h1>
+        <p class="auth-description">
+            Your account is signed in successfully, but the page you opened is outside the permissions assigned to your role.
+        </p>
+    </div>
+
+    <div class="auth-form-card auth-form-card-login">
+        <div class="auth-form-header">
+            <p class="auth-form-kicker">Permission Notice</p>
+            <h2>Access Denied</h2>
+            <p class="text-muted mb-0">Use one of the buttons below to return to an allowed area.</p>
+        </div>
+
+        <div class="d-grid gap-2">
+            @if (User.IsInRole("customer"))
+            {
+                <a asp-controller="BookCatalog" asp-action="Index" class="auth-submit-button text-center text-decoration-none">Go to Catalog</a>
+            }
+            else
+            {
+                <a asp-controller="Admin" asp-action="Dashboard" class="auth-submit-button text-center text-decoration-none">Go to Dashboard</a>
+            }
+
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-outline-secondary w-100">Log Out</button>
+            </form>
+        </div>
+    </div>
+</section>
