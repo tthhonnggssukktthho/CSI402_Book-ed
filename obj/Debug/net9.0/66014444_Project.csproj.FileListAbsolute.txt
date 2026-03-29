@@ -112,7 +112,6 @@ D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\scopedcss\bundle\66014444_Project.styles.css
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\scopedcss\projectbundle\66014444_Project.bundle.scp.css
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\compressed\kj4czplobm-{0}-tklrsx7m89-tklrsx7m89.gz
-D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\compressed\nql8xx78zu-{0}-rynyrol6fb-rynyrol6fb.gz
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\compressed\f6hq9sg5yu-{0}-61n19gt1b8-61n19gt1b8.gz
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\compressed\sdxzkpl8v2-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\compressed\iaf3aw9pc3-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -187,3 +186,4 @@ D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\66014444_Project.pdb
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\66014444_Project.genruntimeconfig.cache
 D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\ref\66014444_Project.dll
+D:\งานเขียนโค้ด\3 2 68H\CSI402\Project\66014444_Project\obj\Debug\net9.0\compressed\nql8xx78zu-{0}-3jiqicaliy-3jiqicaliy.gz

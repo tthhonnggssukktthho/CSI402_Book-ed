@@ -1,9 +1,240 @@
+@model _66014444_Project.ViewModels.Customer.ProfileViewModel
 @{
-    ViewData["Title"] = "My Books";
+    ViewData["Title"] = "โปรไฟล์ของฉัน";
     Layout = "_Layout";
 }
 
-<div>
-    <h2>My Profile</h2>
-    <p>This is where the customer's profile information would be displayed.</p>
+<section class="customer-profile-page py-4 py-lg-5">
+    <div class="customer-profile-hero mb-4 mb-lg-5">
+        <div>
+            <p class="customer-profile-kicker">My Account</p>
+            <h1 class="customer-profile-title">โปรไฟล์ของฉัน</h1>
+            <p class="customer-profile-subtitle">ตรวจสอบข้อมูลบัญชี ข้อมูลผู้รับ และที่อยู่จัดส่งได้ในหน้าเดียว</p>
+        </div>
+        <button type="button" class="btn customer-profile-edit-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+            แก้ไขข้อมูล
+        </button>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="customer-profile-card customer-profile-card-accent h-100">
+                <div class="customer-profile-card-body">
+                    <p class="customer-profile-section-label">ข้อมูลบัญชี</p>
+                    <h2 class="customer-profile-name">@Model.DisplayName</h2>
+
+                    <div class="customer-profile-meta-grid">
+                        <div class="customer-profile-meta-item">
+                            <span>อีเมล</span>
+                            <strong>@Model.Email</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>เบอร์โทร</span>
+                            <strong>@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "-" : Model.PhoneNumber)</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>วันเกิด</span>
+                            <strong>@(Model.BirthDate?.ToString("yyyy-MM-dd") ?? "-")</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>สถานะบัญชี</span>
+                            <strong class="text-capitalize">@Model.Status</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>คะแนนสะสม</span>
+                            <strong>@Model.CurrentPoints คะแนน</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>สมาชิกตั้งแต่</span>
+                            <strong>@Model.CreatedAt.ToString("yyyy-MM-dd")</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="customer-profile-card h-100">
+                <div class="customer-profile-card-body">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                        <div>
+                            <p class="customer-profile-section-label">ข้อมูลการจัดส่ง</p>
+                            <h2 class="customer-profile-card-title">ผู้รับและที่อยู่จัดส่ง</h2>
+                        </div>
+                        <span class="customer-profile-chip">พร้อมใช้งานในการสั่งซื้อ</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="customer-profile-field">
+                                <span>ชื่อผู้รับ</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.ReceiverName) ? "-" : Model.ReceiverName)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="customer-profile-field">
+                                <span>เบอร์ผู้รับ</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.ReceiverPhone) ? "-" : Model.ReceiverPhone)</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="customer-profile-field">
+                                <span>ที่อยู่บรรทัดที่ 1</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.AddressLine1) ? "-" : Model.AddressLine1)</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="customer-profile-field">
+                                <span>ที่อยู่บรรทัดที่ 2</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.AddressLine2) ? "-" : Model.AddressLine2)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>ตำบล/แขวง</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.Subdistrict) ? "-" : Model.Subdistrict)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>อำเภอ/เขต</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.District) ? "-" : Model.District)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>จังหวัด</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.Province) ? "-" : Model.Province)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>รหัสไปรษณีย์</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.PostalCode) ? "-" : Model.PostalCode)</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade customer-profile-modal" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content customer-profile-modal-content">
+            <form asp-action="Profile" asp-controller="Customer" method="post" class="customer-profile-modal-form">
+                @Html.AntiForgeryToken()
+                <div class="modal-header customer-profile-modal-header">
+                    <div>
+                        <p class="customer-profile-kicker mb-1">Edit Profile</p>
+                        <h2 class="modal-title h4 mb-1" id="editProfileModalLabel">แก้ไขข้อมูลส่วนตัว</h2>
+                        <p class="text-muted mb-0">อัปเดตข้อมูลบัญชีและที่อยู่จัดส่งให้เป็นปัจจุบัน</p>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body customer-profile-modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                    <input asp-for="CustomerId" type="hidden" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="DisplayName" class="form-label"></label>
+                            <input asp-for="DisplayName" class="form-control customer-profile-input" />
+                            <span asp-validation-for="DisplayName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control customer-profile-input" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label"></label>
+                            <input asp-for="PhoneNumber" class="form-control customer-profile-input" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="BirthDate" class="form-label"></label>
+                            <input asp-for="BirthDate" class="form-control customer-profile-input" />
+                            <span asp-validation-for="BirthDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ReceiverName" class="form-label"></label>
+                            <input asp-for="ReceiverName" class="form-control customer-profile-input" />
+                            <span asp-validation-for="ReceiverName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="ReceiverPhone" class="form-label"></label>
+                            <input asp-for="ReceiverPhone" class="form-control customer-profile-input" />
+                            <span asp-validation-for="ReceiverPhone" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="AddressLine1" class="form-label"></label>
+                            <input asp-for="AddressLine1" class="form-control customer-profile-input" />
+                            <span asp-validation-for="AddressLine1" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="AddressLine2" class="form-label"></label>
+                            <input asp-for="AddressLine2" class="form-control customer-profile-input" />
+                            <span asp-validation-for="AddressLine2" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Subdistrict" class="form-label"></label>
+                            <input asp-for="Subdistrict" class="form-control customer-profile-input" />
+                            <span asp-validation-for="Subdistrict" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="District" class="form-label"></label>
+                            <input asp-for="District" class="form-control customer-profile-input" />
+                            <span asp-validation-for="District" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Province" class="form-label"></label>
+                            <input asp-for="Province" class="form-control customer-profile-input" />
+                            <span asp-validation-for="Province" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="PostalCode" class="form-label"></label>
+                            <input asp-for="PostalCode" class="form-control customer-profile-input" />
+                            <span asp-validation-for="PostalCode" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer customer-profile-modal-footer">
+                    <button type="button" class="btn customer-profile-cancel-btn" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="submit" class="btn customer-profile-save-btn">บันทึกการเปลี่ยนแปลง</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var modalElement = document.getElementById("editProfileModal");
+                if (modalElement) {
+                    var modal = new bootstrap.Modal(modalElement);
+                    modal.show();
+                }
+            });
+        </script>
+    }
+}
