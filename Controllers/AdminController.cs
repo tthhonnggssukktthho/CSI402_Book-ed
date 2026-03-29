@@ -26,18 +26,94 @@ public class AdminController : Controller
     [Authorize(Policy = "AdminOnly")]
     public IActionResult CustomerList()
     {
-        var customers = _db.Customers
-            .Include(c => c.User)
-            .OrderByDescending(c => c.CreatedAt)
-            .ToList();
+        var model = new AdminCustomerListViewModel
+        {
+            Customers = _db.Customers
+                .Include(c => c.User)
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(c => new AdminCustomerItemViewModel
+                {
+                    CustomerId = c.CustomerId,
+                    Username = c.User.Username,
+                    Email = c.User.Email,
+                    DisplayName = c.DisplayName,
+                    PhoneNumber = c.User.PhoneNumber,
+                    Status = c.Status,
+                    CurrentPoints = c.CurrentPoints,
+                    CreatedAt = c.CreatedAt
+                })
+                .ToList()
+        };
 
-        return View(customers);
+        return View(model);
     }
 
     [Authorize(Policy = "AdminOnly")]
-    public IActionResult CustomerDetails(int id)
+    public IActionResult CustomerDetail(int id)
     {
-        return View();
+        var customer = _db.Customers
+            .Include(c => c.User)
+            .FirstOrDefault(c => c.CustomerId == id);
+
+        if (customer is null)
+        {
+            return NotFound();
+        }
+
+        var model = new AdminCustomerDetailViewModel
+        {
+            CustomerId = customer.CustomerId,
+            Username = customer.User.Username,
+            DisplayName = customer.DisplayName,
+            Email = customer.User.Email,
+            PhoneNumber = customer.User.PhoneNumber,
+            BirthDate = customer.BirthDate,
+            Status = customer.Status,
+            CurrentPoints = customer.CurrentPoints,
+            CreatedAt = customer.CreatedAt,
+            IsActive = customer.User.IsActive,
+            LastLoginAt = customer.User.LastLoginAt,
+            ReceiverName = customer.ReceiverName,
+            ReceiverPhone = customer.ReceiverPhone,
+            AddressLine1 = customer.AddressLine1,
+            AddressLine2 = customer.AddressLine2,
+            Subdistrict = customer.Subdistrict,
+            District = customer.District,
+            Province = customer.Province,
+            PostalCode = customer.PostalCode,
+            NewStatus = customer.Status
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [Authorize(Policy = "AdminOnly")]
+    [ValidateAntiForgeryToken]
+    public IActionResult UpdateCustomerStatus(AdminCustomerDetailViewModel model)
+    {
+        var customer = _db.Customers
+            .Include(c => c.User)
+            .FirstOrDefault(c => c.CustomerId == model.CustomerId);
+
+        if (customer is null)
+        {
+            return NotFound();
+        }
+
+        if (!AdminCustomerDetailViewModel.StatusOptions.Contains(model.NewStatus))
+        {
+            TempData["CustomerStatusError"] = "Invalid customer status.";
+            return RedirectToAction(nameof(CustomerDetail), new { id = model.CustomerId });
+        }
+
+        customer.Status = model.NewStatus;
+        customer.User.IsActive = model.NewStatus == "active";
+        customer.User.UpdatedAt = DateTime.Now;
+        _db.SaveChanges();
+
+        TempData["CustomerStatusSuccess"] = "Customer status updated successfully.";
+        return RedirectToAction(nameof(CustomerDetail), new { id = model.CustomerId });
     }
 
     [Authorize(Policy = "AdminOnly")]

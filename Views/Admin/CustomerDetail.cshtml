@@ -1,9 +1,159 @@
+@model _66014444_Project.ViewModels.Admin.AdminCustomerDetailViewModel
 @{
     ViewData["Title"] = "Customer Detail";
     Layout = "_LayoutStaff";
 }
 
-<div>
-    <h2>Customer Detail</h2>
-    <p>This is where the customer detail information would be displayed.</p>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Customer Detail</h2>
+            <p class="text-muted mb-0">ดูข้อมูลลูกค้าและปรับสถานะการใช้งานของบัญชี</p>
+        </div>
+        <a asp-action="CustomerList" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+
+    @if (TempData["CustomerStatusSuccess"] is string successMessage)
+    {
+        <div class="alert alert-success">@successMessage</div>
+    }
+
+    @if (TempData["CustomerStatusError"] is string errorMessage)
+    {
+        <div class="alert alert-danger">@errorMessage</div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="customer-profile-card customer-profile-card-accent h-100">
+                <div class="customer-profile-card-body">
+                    <p class="customer-profile-section-label">ข้อมูลบัญชี</p>
+                    <h2 class="customer-profile-name">@Model.DisplayName</h2>
+
+                    <div class="customer-profile-meta-grid">
+                        <div class="customer-profile-meta-item">
+                            <span>Username</span>
+                            <strong>@Model.Username</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>อีเมล</span>
+                            <strong>@Model.Email</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>เบอร์โทร</span>
+                            <strong>@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "-" : Model.PhoneNumber)</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>วันเกิด</span>
+                            <strong>@(Model.BirthDate?.ToString("yyyy-MM-dd") ?? "-")</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>สถานะลูกค้า</span>
+                            <strong class="text-capitalize">@Model.Status</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>สถานะล็อกอิน</span>
+                            <strong>@(Model.IsActive == true ? "Active" : "Inactive")</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>คะแนนสะสม</span>
+                            <strong>@Model.CurrentPoints คะแนน</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>เข้าสู่ระบบล่าสุด</span>
+                            <strong>@(Model.LastLoginAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</strong>
+                        </div>
+                        <div class="customer-profile-meta-item">
+                            <span>สมัครสมาชิกเมื่อ</span>
+                            <strong>@Model.CreatedAt.ToString("yyyy-MM-dd")</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="customer-profile-card h-100">
+                <div class="customer-profile-card-body">
+                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                        <div>
+                            <p class="customer-profile-section-label">ข้อมูลการจัดส่ง</p>
+                            <h2 class="customer-profile-card-title">ผู้รับและที่อยู่จัดส่ง</h2>
+                        </div>
+                        <span class="customer-profile-chip text-capitalize">@Model.Status</span>
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="customer-profile-field">
+                                <span>ชื่อผู้รับ</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.ReceiverName) ? "-" : Model.ReceiverName)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="customer-profile-field">
+                                <span>เบอร์ผู้รับ</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.ReceiverPhone) ? "-" : Model.ReceiverPhone)</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="customer-profile-field">
+                                <span>ที่อยู่บรรทัดที่ 1</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.AddressLine1) ? "-" : Model.AddressLine1)</strong>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="customer-profile-field">
+                                <span>ที่อยู่บรรทัดที่ 2</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.AddressLine2) ? "-" : Model.AddressLine2)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>ตำบล/แขวง</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.Subdistrict) ? "-" : Model.Subdistrict)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>อำเภอ/เขต</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.District) ? "-" : Model.District)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>จังหวัด</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.Province) ? "-" : Model.Province)</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <div class="customer-profile-field">
+                                <span>รหัสไปรษณีย์</span>
+                                <strong>@(string.IsNullOrWhiteSpace(Model.PostalCode) ? "-" : Model.PostalCode)</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="UpdateCustomerStatus" method="post" class="row g-3">
+                        @Html.AntiForgeryToken()
+                        <input asp-for="CustomerId" type="hidden" />
+
+                        <div class="col-md-8">
+                            <label asp-for="NewStatus" class="form-label">ปรับสถานะการใช้งาน</label>
+                            <select asp-for="NewStatus" class="form-select">
+                                @foreach (var status in _66014444_Project.ViewModels.Admin.AdminCustomerDetailViewModel.StatusOptions)
+                                {
+                                    <option value="@status" selected="@(Model.Status == status ? "selected" : null)">@status</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 d-flex align-items-end">
+                            <button type="submit" class="btn btn-primary w-100">อัปเดตสถานะ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

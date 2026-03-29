@@ -1,38 +1,52 @@
-@model IEnumerable<_66014444_Project.Models.Customer>
+@model _66014444_Project.ViewModels.Admin.AdminCustomerListViewModel
 @{
     ViewData["Title"] = "Customer List";
     Layout = "_LayoutStaff";
 }
 
-<div class="container">
-    <h2>Customer List</h2>
-    <p>Here you can manage your customers.</p>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Customer List</h2>
+            <p class="text-muted mb-0">จัดการรายชื่อลูกค้าทั้งหมดในระบบ</p>
+        </div>
+    </div>
 
-    <table class="table table-hover table-bordered">
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Display Name</th>
-                <th>Phone Number</th>
-                <th>Status</th>
-                <th>Current Points</th>
-                <th>Created At</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var customer in Model)
-            {
-                <tr>
-                    <td>@customer.User?.Username</td>
-                    <td>@customer.User?.Email</td>
-                    <td>@customer.DisplayName</td>
-                    <td>@customer.User?.PhoneNumber</td>
-                    <td>@customer.Status</td>
-                    <td>@customer.CurrentPoints</td>
-                    <td>@customer.CreatedAt</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Display Name</th>
+                            <th>Phone Number</th>
+                            <th>Status</th>
+                            <th>Current Points</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var customer in Model.Customers)
+                        {
+                            <tr>
+                                <td>@customer.Username</td>
+                                <td>@customer.Email</td>
+                                <td>@customer.DisplayName</td>
+                                <td>@customer.PhoneNumber</td>
+                                <td class="text-capitalize">@customer.Status</td>
+                                <td>@customer.CurrentPoints</td>
+                                <td>@customer.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <a asp-action="CustomerDetail" asp-route-id="@customer.CustomerId" class="btn btn-sm btn-outline-info">Detail</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
