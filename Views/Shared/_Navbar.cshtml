@@ -32,7 +32,7 @@
             <label class="visually-hidden" for="searchInput">Search books</label>
             <input id="searchInput" type="search" class="store-search-input" placeholder="ค้นหาหนังสือที่อยากอ่านต่อ..." />
 
-            <button type="submit" class="store-search-button">&#x1F50E;&#xFE0E;</button>
+            <button type="submit" class="store-search-button">ค้นหา</button>
         </form>
 
         <div class="store-actions">
@@ -44,11 +44,26 @@
 
             @if (isCustomer)
             {
-                <span class="store-pill-button store-pill-secondary">@customerName</span>
-                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="store-pill-button store-pill-secondary">ออกจากระบบ</button>
-                </form>
+                <div class="dropdown">
+                    <button class="store-pill-button store-pill-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        @customerName
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <a class="dropdown-item" asp-controller="Customer" asp-action="Profile">Profile</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Customer" asp-action="MyBooks">MyBooks</a>
+                        </li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li>
+                            <form asp-controller="Account" asp-action="Logout" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="dropdown-item">Logout</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             }
             else if (isAuthenticated)
             {
