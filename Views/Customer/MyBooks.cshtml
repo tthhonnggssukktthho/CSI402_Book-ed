@@ -1,10 +1,167 @@
 @{
-    ViewData["Title"] = "My Books";
+    ViewData["Title"] = "หนังสือของฉัน";
     Layout = "_Layout";
 }
 
-<div>
-    <h2>My Books</h2>
-    <p>This is where the customer's purchased books would be displayed.</p>
-    <h1>Test Git</h1>
-</div>
+<section class="customer-books-page py-4 py-lg-5">
+    <div class="customer-books-hero mb-4">
+        <div>
+            <p class="customer-books-kicker">My Books</p>
+            <h1 class="customer-books-title">คลังหนังสือของฉัน</h1>
+            <p class="customer-books-subtitle">สลับดูได้ทั้งหนังสือที่คุณซื้อแล้ว และหนังสือที่คุณส่งเข้ามาขาย โดยไม่ต้องเปลี่ยนหน้า</p>
+        </div>
+    </div>
+
+    <div class="customer-books-switcher mb-4" role="tablist" aria-label="Book views">
+        <button type="button" class="customer-books-tab is-active" data-books-tab="purchased" aria-selected="true">
+            แสดงหนังสือที่ซื้อแล้ว
+        </button>
+        <button type="button" class="customer-books-tab" data-books-tab="selling" aria-selected="false">
+            แสดงหนังสือที่ยื่นขาย
+        </button>
+    </div>
+
+    <div class="customer-books-panel is-active" data-books-panel="purchased">
+        <div class="customer-books-panel-head">
+            <div>
+                <h2>หนังสือที่ซื้อแล้ว</h2>
+                <p>ตัวอย่างโครงหน้าสำหรับแสดงรายการหนังสือที่ลูกค้าซื้อเรียบร้อยแล้ว</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <aside class="col-lg-3">
+                <div class="customer-books-filter">
+                    <h3>ตัวกรอง</h3>
+                    <label><input type="checkbox" checked /> ซื้อภายใน 30 วัน</label>
+                    <label><input type="checkbox" /> พร้อมอ่านต่อ</label>
+                    <label><input type="checkbox" /> มีรีวิวจากร้าน</label>
+                </div>
+            </aside>
+
+            <div class="col-lg-9">
+                <div class="customer-books-grid">
+                    <article class="customer-book-card">
+                        <div class="customer-book-cover customer-book-cover-purchased">ซื้อแล้ว</div>
+                        <div class="customer-book-body">
+                            <p class="customer-book-type">Purchased</p>
+                            <h3>เกิดใหม่อีกครั้ง ฉันก็ยังเป็นเจ้าหญิง</h3>
+                            <p>ผู้แต่ง: Example Author</p>
+                            <p>วันที่ซื้อ: 2026-03-18</p>
+                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
+                        </div>
+                    </article>
+
+                    <article class="customer-book-card">
+                        <div class="customer-book-cover customer-book-cover-purchased">ซื้อแล้ว</div>
+                        <div class="customer-book-body">
+                            <p class="customer-book-type">Purchased</p>
+                            <h3>แฟ้มคดีห้องสมุดปิดตาย</h3>
+                            <p>ผู้แต่ง: Mystery Writer</p>
+                            <p>วันที่ซื้อ: 2026-02-28</p>
+                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
+                        </div>
+                    </article>
+
+                    <article class="customer-book-card">
+                        <div class="customer-book-cover customer-book-cover-purchased">ซื้อแล้ว</div>
+                        <div class="customer-book-body">
+                            <p class="customer-book-type">Purchased</p>
+                            <h3>บทกวีใต้แสงจันทร์</h3>
+                            <p>ผู้แต่ง: Moonlight Press</p>
+                            <p>วันที่ซื้อ: 2026-01-09</p>
+                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="customer-books-panel" data-books-panel="selling" hidden>
+        <div class="customer-books-panel-head">
+            <div>
+                <h2>หนังสือที่ยื่นขาย</h2>
+                <p>ตัวอย่างโครงหน้าสำหรับติดตามหนังสือที่คุณส่งเข้ามาให้ร้านประเมินและขายต่อ</p>
+            </div>
+            <a asp-controller="SellBook" asp-action="Create" class="customer-books-create-btn">
+                ไปหน้าลงข้อมูลขายหนังสือ
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <aside class="col-lg-3">
+                <div class="customer-books-filter">
+                    <h3>ตัวกรอง</h3>
+                    <label><input type="checkbox" checked /> รอประเมิน</label>
+                    <label><input type="checkbox" /> อนุมัติแล้ว</label>
+                    <label><input type="checkbox" /> ขายสำเร็จ</label>
+                </div>
+            </aside>
+
+            <div class="col-lg-9">
+                <div class="customer-books-grid">
+                    <article class="customer-book-card">
+                        <div class="customer-book-cover customer-book-cover-selling">รอประเมิน</div>
+                        <div class="customer-book-body">
+                            <p class="customer-book-type">Sell Submission</p>
+                            <h3>สวนลับของหัวใจ</h3>
+                            <p>ราคาที่ยื่น: ฿120</p>
+                            <p>สถานะ: pending / ready_for_review</p>
+                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
+                        </div>
+                    </article>
+
+                    <article class="customer-book-card">
+                        <div class="customer-book-cover customer-book-cover-selling">อนุมัติแล้ว</div>
+                        <div class="customer-book-body">
+                            <p class="customer-book-type">Sell Submission</p>
+                            <h3>สงครามเวทมนตร์บทสุดท้าย</h3>
+                            <p>ราคาที่ยื่น: ฿180</p>
+                            <p>สถานะ: approved / ready_for_sale</p>
+                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
+                        </div>
+                    </article>
+
+                    <article class="customer-book-card">
+                        <div class="customer-book-cover customer-book-cover-selling">ขายแล้ว</div>
+                        <div class="customer-book-body">
+                            <p class="customer-book-type">Sell Submission</p>
+                            <h3>คู่มือไขคดีฉบับสมบูรณ์</h3>
+                            <p>ราคาที่ยื่น: ฿150</p>
+                            <p>สถานะ: approved / sold</p>
+                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tabs = document.querySelectorAll("[data-books-tab]");
+            const panels = document.querySelectorAll("[data-books-panel]");
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", function () {
+                    const target = tab.getAttribute("data-books-tab");
+
+                    tabs.forEach((item) => {
+                        const isActive = item === tab;
+                        item.classList.toggle("is-active", isActive);
+                        item.setAttribute("aria-selected", isActive ? "true" : "false");
+                    });
+
+                    panels.forEach((panel) => {
+                        const isActive = panel.getAttribute("data-books-panel") === target;
+                        panel.classList.toggle("is-active", isActive);
+                        panel.hidden = !isActive;
+                    });
+                });
+            });
+        });
+    </script>
+}
