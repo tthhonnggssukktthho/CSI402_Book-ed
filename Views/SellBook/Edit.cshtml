@@ -1,9 +1,196 @@
+@model _66014444_Project.ViewModels.SellBook.SellBookEditViewModel
 @{
-    ViewData["Title"] = "Edit Books";
+    ViewData["Title"] = "แก้ไขข้อมูลหนังสือขาย";
     Layout = "_Layout";
 }
 
-<div>
-    <h2>Edit Books</h2>
-    <p>This is where the form to edit books would be displayed.</p>
-</div>
+<section class="customer-profile-page py-4 py-lg-5">
+    <div class="customer-profile-hero mb-4 mb-lg-5">
+        <div>
+            <p class="customer-profile-kicker">Edit Sell Book</p>
+            <h1 class="customer-profile-title">แก้ไขข้อมูลหนังสือที่ยื่นขาย</h1>
+            <p class="customer-profile-subtitle">คุณยังสามารถแก้ไขข้อมูลได้ตราบใดที่หนังสือยังอยู่ในสถานะรอประเมินหรือถูกตีกลับ</p>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.RejectionReason))
+    {
+        <div class="alert alert-warning mb-4">
+            <strong>เหตุผลที่ถูกตีกลับ:</strong> @Model.RejectionReason
+        </div>
+    }
+
+    <div class="customer-profile-card">
+        <div class="customer-profile-card-body">
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="customer-profile-field">
+                        <span>สถานะประเมิน</span>
+                        <strong>@Model.ApprovalStatus</strong>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="customer-profile-field">
+                        <span>สถานะการขาย</span>
+                        <strong>@Model.SaleStatus</strong>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="customer-profile-field">
+                        <span>รหัสหนังสือ</span>
+                        <strong>#@Model.BookId</strong>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="Edit" asp-controller="SellBook" method="post" enctype="multipart/form-data" class="row g-3">
+                @Html.AntiForgeryToken()
+                <input asp-for="BookId" type="hidden" />
+                <input asp-for="ExistingImageUrl1" type="hidden" />
+                <input asp-for="ExistingImageUrl2" type="hidden" />
+                <input asp-for="ExistingImageUrl3" type="hidden" />
+                <input asp-for="ExistingImageUrl4" type="hidden" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                <div class="col-md-6">
+                    <label asp-for="Title" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="Title" class="form-control customer-profile-input" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="CategoryName" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <select asp-for="CategoryName" class="form-select customer-profile-input">
+                        <option value="">เลือกหมวดหมู่หนังสือ</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="SeriesName" class="form-label"></label>
+                    <input asp-for="SeriesName" class="form-control customer-profile-input" />
+                    <span asp-validation-for="SeriesName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="VolumeNo" class="form-label"></label>
+                    <input asp-for="VolumeNo" class="form-control customer-profile-input" />
+                    <span asp-validation-for="VolumeNo" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="PublisherName" class="form-label"></label>
+                    <input asp-for="PublisherName" class="form-control customer-profile-input" />
+                    <span asp-validation-for="PublisherName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="AuthorName" class="form-label"></label>
+                    <input asp-for="AuthorName" class="form-control customer-profile-input" />
+                    <span asp-validation-for="AuthorName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Isbn" class="form-label"></label>
+                    <input asp-for="Isbn" class="form-control customer-profile-input" />
+                    <span asp-validation-for="Isbn" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="PublishYear" class="form-label"></label>
+                    <input asp-for="PublishYear" class="form-control customer-profile-input" />
+                    <span asp-validation-for="PublishYear" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ConditionCode" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <select asp-for="ConditionCode" class="form-select customer-profile-input">
+                        <option value="">เลือกระดับสภาพหนังสือ</option>
+                        @foreach (var option in Model.ConditionOptions)
+                        {
+                            <option value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ConditionCode" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Synopsis" class="form-label"></label>
+                    <textarea asp-for="Synopsis" rows="3" class="form-control customer-profile-input"></textarea>
+                    <span asp-validation-for="Synopsis" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="BookDescription" class="form-label"></label>
+                    <textarea asp-for="BookDescription" rows="4" class="form-control customer-profile-input"></textarea>
+                    <span asp-validation-for="BookDescription" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile1" class="form-label"></label>
+                    <input asp-for="ImageFile1" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl1))
+                    {
+                        <img src="@Model.ExistingImageUrl1" alt="รูปปกหน้า" class="img-fluid rounded mt-2 border" style="max-height: 140px;" />
+                    }
+                    <span asp-validation-for="ImageFile1" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile2" class="form-label"></label>
+                    <input asp-for="ImageFile2" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl2))
+                    {
+                        <img src="@Model.ExistingImageUrl2" alt="รูปปกหลัง" class="img-fluid rounded mt-2 border" style="max-height: 140px;" />
+                    }
+                    <span asp-validation-for="ImageFile2" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile3" class="form-label"></label>
+                    <input asp-for="ImageFile3" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl3))
+                    {
+                        <img src="@Model.ExistingImageUrl3" alt="รูปตำหนิ 1" class="img-fluid rounded mt-2 border" style="max-height: 140px;" />
+                    }
+                    <span asp-validation-for="ImageFile3" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile4" class="form-label"></label>
+                    <input asp-for="ImageFile4" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    @if (!string.IsNullOrWhiteSpace(Model.ExistingImageUrl4))
+                    {
+                        <img src="@Model.ExistingImageUrl4" alt="รูปตำหนิ 2" class="img-fluid rounded mt-2 border" style="max-height: 140px;" />
+                    }
+                    <span asp-validation-for="ImageFile4" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ConditionNote" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <textarea asp-for="ConditionNote" rows="3" class="form-control customer-profile-input"></textarea>
+                    <span asp-validation-for="ConditionNote" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ProposedPrice" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="ProposedPrice" class="form-control customer-profile-input" />
+                    <span asp-validation-for="ProposedPrice" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 d-flex gap-2 pt-2">
+                    <a asp-controller="Customer" asp-action="MyBooks" class="btn customer-profile-cancel-btn">กลับไปหน้าหนังสือของฉัน</a>
+                    <button type="submit" class="btn customer-profile-save-btn">บันทึกการแก้ไข</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
