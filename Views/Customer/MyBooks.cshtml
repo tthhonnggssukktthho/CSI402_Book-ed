@@ -1,3 +1,4 @@
+@model _66014444_Project.ViewModels.Customer.MyBooksViewModel
 @{
     ViewData["Title"] = "หนังสือของฉัน";
     Layout = "_Layout";
@@ -11,6 +12,11 @@
             <p class="customer-books-subtitle">สลับดูได้ทั้งหนังสือที่คุณซื้อแล้ว และหนังสือที่คุณส่งเข้ามาขาย โดยไม่ต้องเปลี่ยนหน้า</p>
         </div>
     </div>
+
+    @if (TempData["SellBookSuccess"] is string successMessage)
+    {
+        <div class="alert alert-success mb-4">@successMessage</div>
+    }
 
     <div class="customer-books-switcher mb-4" role="tablist" aria-label="Book views">
         <button type="button" class="customer-books-tab is-active" data-books-tab="purchased" aria-selected="true">
@@ -82,7 +88,7 @@
         <div class="customer-books-panel-head">
             <div>
                 <h2>หนังสือที่ยื่นขาย</h2>
-                <p>ตัวอย่างโครงหน้าสำหรับติดตามหนังสือที่คุณส่งเข้ามาให้ร้านประเมินและขายต่อ</p>
+                <p>รายการจริงของหนังสือที่คุณส่งเข้ามาให้ร้านประเมินและขายต่อ</p>
             </div>
             <a asp-controller="SellBook" asp-action="Create" class="customer-books-create-btn">
                 ไปหน้าลงข้อมูลขายหนังสือ
@@ -100,40 +106,50 @@
             </aside>
 
             <div class="col-lg-9">
-                <div class="customer-books-grid">
-                    <article class="customer-book-card">
-                        <div class="customer-book-cover customer-book-cover-selling">รอประเมิน</div>
-                        <div class="customer-book-body">
-                            <p class="customer-book-type">Sell Submission</p>
-                            <h3>สวนลับของหัวใจ</h3>
-                            <p>ราคาที่ยื่น: ฿120</p>
-                            <p>สถานะ: pending / ready_for_review</p>
-                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
-                        </div>
-                    </article>
-
-                    <article class="customer-book-card">
-                        <div class="customer-book-cover customer-book-cover-selling">อนุมัติแล้ว</div>
-                        <div class="customer-book-body">
-                            <p class="customer-book-type">Sell Submission</p>
-                            <h3>สงครามเวทมนตร์บทสุดท้าย</h3>
-                            <p>ราคาที่ยื่น: ฿180</p>
-                            <p>สถานะ: approved / ready_for_sale</p>
-                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
-                        </div>
-                    </article>
-
-                    <article class="customer-book-card">
-                        <div class="customer-book-cover customer-book-cover-selling">ขายแล้ว</div>
-                        <div class="customer-book-body">
-                            <p class="customer-book-type">Sell Submission</p>
-                            <h3>คู่มือไขคดีฉบับสมบูรณ์</h3>
-                            <p>ราคาที่ยื่น: ฿150</p>
-                            <p>สถานะ: approved / sold</p>
-                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
-                        </div>
-                    </article>
-                </div>
+                @if (Model.SellingBooks.Any())
+                {
+                    <div class="customer-books-grid">
+                        @foreach (var book in Model.SellingBooks)
+                        {
+                            <article class="customer-book-card">
+                                <div class="customer-book-cover customer-book-cover-selling" style="background-image: linear-gradient(135deg, rgba(226,155,95,.85), rgba(255,228,149,.85)), url('@book.ImageUrl'); background-size: cover; background-position: center;">
+                                    <span>@book.ApprovalStatus</span>
+                                </div>
+                                <div class="customer-book-body">
+                                    <p class="customer-book-type">Sell Submission</p>
+                                    <h3>@book.Title</h3>
+                                    <p>ซีรีส์: @(string.IsNullOrWhiteSpace(book.SeriesName) ? "-" : book.SeriesName)</p>
+                                    <p>เล่ม: @(string.IsNullOrWhiteSpace(book.VolumeNo) ? "-" : book.VolumeNo)</p>
+                                    <p>ราคาที่ยื่น: @(book.ProposedPrice.HasValue ? $"฿{book.ProposedPrice.Value:N2}" : "-")</p>
+                                    <p>ราคาที่อนุมัติ: @(book.ApprovedPrice.HasValue ? $"฿{book.ApprovedPrice.Value:N2}" : "-")</p>
+                                    <p>สภาพ: @book.ConditionCode</p>
+                                    <p>สถานะประเมิน: @book.ApprovalStatus</p>
+                                    <p>สถานะการขาย: @book.SaleStatus</p>
+                                    <p>วันที่ส่งขาย: @book.CreatedAt.ToString("yyyy-MM-dd")</p>
+                                    @if (!string.IsNullOrWhiteSpace(book.ConditionNote))
+                                    {
+                                        <p>หมายเหตุ: @book.ConditionNote</p>
+                                    }
+                                    @if (book.CanEdit)
+                                    {
+                                        <a asp-controller="SellBook" asp-action="Edit" asp-route-id="@book.BookId" class="customer-book-link">แก้ไขข้อมูล</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="customer-book-link text-muted">ไม่สามารถแก้ไขได้แล้ว</span>
+                                    }
+                                </div>
+                            </article>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="customer-books-empty">
+                        <h3>ยังไม่มีหนังสือที่ยื่นขาย</h3>
+                        <p>เริ่มลงข้อมูลหนังสือเล่มแรกของคุณได้จากปุ่มด้านบน</p>
+                    </div>
+                }
             </div>
         </div>
     </div>

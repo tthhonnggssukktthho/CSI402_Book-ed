@@ -118,6 +118,42 @@ public class CustomerController : Controller
 
     public IActionResult MyBooks()
     {
-        return View();
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Challenge();
+        }
+
+        var customer = _db.Customers.FirstOrDefault(c => c.UserId == userId);
+        if (customer is null)
+        {
+            return NotFound();
+        }
+
+        var model = new MyBooksViewModel
+        {
+            SellingBooks = _db.Books
+                .Where(b => b.SellerCustomerId == customer.CustomerId)
+                .OrderByDescending(b => b.CreatedAt)
+                .Select(b => new MyBookItemViewModel
+                {
+                    BookId = b.BookId,
+                    Title = b.Title,
+                    SeriesName = b.SeriesName,
+                    VolumeNo = b.VolumeNo,
+                    ConditionCode = b.ConditionCode,
+                    ConditionNote = b.ConditionNote,
+                    ProposedPrice = b.ProposedPrice,
+                    ApprovedPrice = b.ApprovedPrice,
+                    ApprovalStatus = b.ApprovalStatus,
+                    SaleStatus = b.SaleStatus,
+                    ImageUrl = b.ImageUrl,
+                    CreatedAt = b.CreatedAt,
+                    CanEdit = b.ApprovalStatus == "pending" || b.ApprovalStatus == "rejected"
+                })
+                .ToList()
+        };
+
+        return View(model);
     }
 }
