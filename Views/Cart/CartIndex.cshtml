@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Your Cart";
+    Layout = "_Layout";
+}
+
+<h1>Your Cart</h1>
+<div>
+    @if (Model.Items.Count == 0)
+    {
+        <p>Your cart is empty.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Price.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        <td>@(item.Price * item.Quantity).ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <h3>Subtotal: @Model.Subtotal.ToString("C")</h3>
+
+        <a href="/Checkout" class="btn btn-primary">Proceed to Checkout</a>
+    }
+</div>
