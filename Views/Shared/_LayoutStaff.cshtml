@@ -92,34 +92,34 @@
 
         <div class="admin-nav-section">
             <small class="admin-nav-caption">Finance</small>
-            <span class="admin-nav-link disabled">
+            <a class="admin-nav-link @(currentController == "Finance" && currentAction == "Queue" ? "active" : "")" asp-controller="Finance" asp-action="Queue">
                 <span class="admin-nav-icon">$</span>
                 <span>Payment Queue</span>
-            </span>
-            <span class="admin-nav-link disabled">
+            </a>
+            <a class="admin-nav-link" asp-controller="Finance" asp-action="Queue">
                 <span class="admin-nav-icon">T</span>
                 <span>Transfer Review</span>
-            </span>
-            <span class="admin-nav-link disabled">
+            </a>
+            <a class="admin-nav-link" asp-controller="Finance" asp-action="Queue">
                 <span class="admin-nav-icon">R</span>
                 <span>Revenue Summary</span>
-            </span>
+            </a>
         </div>
 
         <div class="admin-nav-section">
             <small class="admin-nav-caption">Shipping</small>
-            <span class="admin-nav-link disabled">
+            <a class="admin-nav-link @(currentController == "Shipping" && currentAction == "Queue" ? "active" : "")" asp-controller="Shipping" asp-action="Queue">
                 <span class="admin-nav-icon">S</span>
                 <span>Shipping Queue</span>
-            </span>
-            <span class="admin-nav-link disabled">
+            </a>
+            <a class="admin-nav-link" asp-controller="Shipping" asp-action="Queue">
                 <span class="admin-nav-icon">P</span>
                 <span>Prepare Parcel</span>
-            </span>
-            <span class="admin-nav-link disabled">
+            </a>
+            <a class="admin-nav-link" asp-controller="Shipping" asp-action="Queue">
                 <span class="admin-nav-icon">T</span>
                 <span>Tracking Update</span>
-            </span>
+            </a>
         </div>
 
         <div class="admin-nav-section">

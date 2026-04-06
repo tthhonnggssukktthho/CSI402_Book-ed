@@ -25,9 +25,25 @@
             {
                 <a asp-controller="BookCatalog" asp-action="Index" class="auth-submit-button text-center text-decoration-none">Go to Catalog</a>
             }
-            else
+            else if (User.IsInRole("admin"))
             {
                 <a asp-controller="Admin" asp-action="Dashboard" class="auth-submit-button text-center text-decoration-none">Go to Dashboard</a>
+            }
+            else if (User.IsInRole("appraisal"))
+            {
+                <a asp-controller="Appraisal" asp-action="Queue" class="auth-submit-button text-center text-decoration-none">Go to Appraisal Queue</a>
+            }
+            else if (User.IsInRole("finance"))
+            {
+                <a asp-controller="Finance" asp-action="Queue" class="auth-submit-button text-center text-decoration-none">Go to Finance Queue</a>
+            }
+            else if (User.IsInRole("shipping"))
+            {
+                <a asp-controller="Shipping" asp-action="Queue" class="auth-submit-button text-center text-decoration-none">Go to Shipping Queue</a>
+            }
+            else
+            {
+                <a asp-controller="Account" asp-action="Login" class="auth-submit-button text-center text-decoration-none">Go to Login</a>
             }
 
             <form asp-controller="Account" asp-action="Logout" method="post">
