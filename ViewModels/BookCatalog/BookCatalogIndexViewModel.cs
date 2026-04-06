@@ -30,3 +30,5 @@ public class BookCardViewModel
     public decimal FinalPrice { get; set; }
     public string? ConditionNote { get; set; }
 }
+
+

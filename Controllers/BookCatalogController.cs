@@ -34,24 +34,69 @@ public class BookCatalogController : Controller
                 .OrderBy(category => category)
                 .ToList(),
             Books = approvedBooks
-                .Select(b => new BookCardViewModel
-                {
-                    BookId = b.BookId,
-                    Title = b.Title,
-                    SeriesName = b.SeriesName,
-                    VolumeNo = b.VolumeNo,
-                    AuthorName = b.AuthorName,
-                    CategoryName = b.CategoryName,
-                    ImageUrl = b.ImageUrl,
-                    ConditionCode = b.ConditionCode,
-                    ConditionDiscountPct = b.ConditionDiscountPct,
-                    ApprovedPrice = b.ApprovedPrice ?? 0m,
-                    FinalPrice = (b.ApprovedPrice ?? 0m) * (1 - (b.ConditionDiscountPct / 100m)),
-                    ConditionNote = b.ConditionNote
-                })
+                .Select(MapBookCard)
                 .ToList()
         };
 
         return View(model);
+    }
+
+    public IActionResult Detail(int id)
+    {
+        var book = _db.Books.FirstOrDefault(b => b.BookId == id && b.ApprovalStatus == "approved");
+        if (book is null)
+        {
+            return NotFound();
+        }
+
+        var approvedPrice = book.ApprovedPrice ?? 0m;
+        var model = new BookDetailViewModel
+        {
+            BookId = book.BookId,
+            Title = book.Title,
+            SeriesName = book.SeriesName,
+            VolumeNo = book.VolumeNo,
+            CategoryName = book.CategoryName,
+            PublisherName = book.PublisherName,
+            AuthorName = book.AuthorName,
+            Isbn = book.Isbn,
+            PublishYear = book.PublishYear,
+            Synopsis = book.Synopsis,
+            BookDescription = book.BookDescription,
+            ImageUrl = book.ImageUrl,
+            ImageUrl2 = book.ImageUrl2,
+            ImageUrl3 = book.ImageUrl3,
+            ImageUrl4 = book.ImageUrl4,
+            ConditionCode = book.ConditionCode,
+            ConditionDiscountPct = book.ConditionDiscountPct,
+            ConditionNote = book.ConditionNote,
+            ApprovedPrice = approvedPrice,
+            FinalPrice = approvedPrice * (1 - (book.ConditionDiscountPct / 100m)),
+            SaleStatus = book.SaleStatus,
+            CanAddToCart = !string.Equals(book.SaleStatus, "sold", StringComparison.OrdinalIgnoreCase)
+        };
+
+        return View(model);
+    }
+
+    private static BookCardViewModel MapBookCard(Book book)
+    {
+        var approvedPrice = book.ApprovedPrice ?? 0m;
+
+        return new BookCardViewModel
+        {
+            BookId = book.BookId,
+            Title = book.Title,
+            SeriesName = book.SeriesName,
+            VolumeNo = book.VolumeNo,
+            AuthorName = book.AuthorName,
+            CategoryName = book.CategoryName,
+            ImageUrl = book.ImageUrl,
+            ConditionCode = book.ConditionCode,
+            ConditionDiscountPct = book.ConditionDiscountPct,
+            ApprovedPrice = approvedPrice,
+            FinalPrice = approvedPrice * (1 - (book.ConditionDiscountPct / 100m)),
+            ConditionNote = book.ConditionNote
+        };
     }
 }

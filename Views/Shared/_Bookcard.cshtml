@@ -1,11 +1,12 @@
 @{
+    var bookId = ViewData["BookId"] as int? ?? 0;
     var coverTone = ViewData["CoverTone"] as string ?? "cover-romance";
     var badgeText = ViewData["Badge"] as string ?? "สภาพดี";
     var title = ViewData["Title"] as string ?? "Midnight on Paper Street";
     var author = ViewData["Author"] as string ?? "Rin Watanabe";
     var category = ViewData["Category"] as string ?? "แฟนตาซี";
     var price = ViewData["Price"] as string ?? "220";
-    var detail = ViewData["Detail"] as string ?? "มีตำหนิเล็กน้อยที่สัน แต่หน้ากระดาษสะอาด";
+    var detail = ViewData["Detail"] as string ?? "หนังสือสภาพดี พร้อมจำหน่าย";
 }
 
 <article class="book-card">
@@ -31,14 +32,19 @@
                 <span class="book-card-price-label">ราคา</span>
                 <strong class="book-card-price">฿@price</strong>
             </div>
-            <a class="book-card-button" href="#">ดูรายละเอียด</a>
-            <button class="book-card-button" type="button" aria-label="Add to cart" title="Add to cart">
-                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="9" cy="20" r="1"></circle>
-                    <circle cx="18" cy="20" r="1"></circle>
-                    <path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6"></path>
-                </svg>
-            </button>
+            <a class="book-card-button" asp-controller="BookCatalog" asp-action="Detail" asp-route-id="@bookId">ดูรายละเอียด</a>
+            <form asp-controller="Cart" asp-action="Add" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="bookId" value="@bookId" />
+                <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+                <button class="book-card-button" type="submit" aria-label="Add to cart" title="Add to cart">
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="20" r="1"></circle>
+                        <circle cx="18" cy="20" r="1"></circle>
+                        <path d="M2 3h3l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 7H6"></path>
+                    </svg>
+                </button>
+            </form>
         </div>
     </div>
 </article>
