@@ -159,9 +159,7 @@ public class AccountController : Controller
             return LocalRedirect(model.ReturnUrl);
         }
 
-        return role == "customer"
-            ? RedirectToAction("Index", "BookCatalog")
-            : RedirectToAction("Dashboard", "Admin");
+        return RedirectToRoleHome(role);
     }
 
     [Authorize]
@@ -176,7 +174,27 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult AccessDenied()
     {
+        if (User.Identity?.IsAuthenticated == true)
+        {
+            var role = User.FindFirst(ClaimTypes.Role)?.Value;
+            TempData["AccessDeniedMessage"] = "You do not have permission to open that page.";
+            return RedirectToRoleHome(role);
+        }
+
         return View();
+    }
+
+    private IActionResult RedirectToRoleHome(string? role)
+    {
+        return (role ?? string.Empty).ToLowerInvariant() switch
+        {
+            "customer" => RedirectToAction("Index", "BookCatalog"),
+            "admin" => RedirectToAction("Dashboard", "Admin"),
+            "appraisal" => RedirectToAction("Queue", "Appraisal"),
+            "finance" => RedirectToAction("Queue", "Finance"),
+            "shipping" => RedirectToAction("Queue", "Shipping"),
+            _ => RedirectToAction(nameof(Login))
+        };
     }
 
     private static string ResolveRole(User user)

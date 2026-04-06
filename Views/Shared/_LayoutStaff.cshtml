@@ -1,9 +1,13 @@
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Book'ed Staff</title>
+    <title>@ViewData["Title"] - Book'ed Admin</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/colors.css" asp-append-version="true" />
@@ -21,10 +25,10 @@
                 <span></span>
             </button>
             <a class="admin-brand text-decoration-none" asp-controller="Admin" asp-action="Dashboard">
-                <span class="admin-brand-mark">B</span>
+                <span class="admin-brand-mark">A</span>
                 <span class="admin-brand-text">
                     <strong>Book'ed</strong>
-                    <small>Staff dashboard</small>
+                    <small>Admin workspace</small>
                 </span>
             </a>
         </div>
@@ -39,10 +43,10 @@
             </button>
 
             <div class="admin-profile">
-                <div class="admin-avatar">ST</div>
+                <div class="admin-avatar">AD</div>
                 <div class="d-none d-sm-block">
-                    <strong>@(User.Identity?.Name ?? "Staff Team")</strong>
-                    <small>@(User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "Back office")</small>
+                    <strong>@(User.Identity?.Name ?? "Admin")</strong>
+                    <small>Administrator</small>
                 </div>
             </div>
         </div>
@@ -50,44 +54,72 @@
 
     <aside class="admin-sidebar" data-admin-sidebar>
         <div class="admin-sidebar-header">
-            <p class="mb-1 admin-sidebar-title">Navigation</p>
-            <p class="mb-0 admin-sidebar-subtitle">Internal workspace for admin and staff operations</p>
+            <p class="mb-1 admin-sidebar-title">Admin Menu</p>
+            <p class="mb-0 admin-sidebar-subtitle">จัดการผู้ใช้งาน ระบบร้าน และภาพรวมการดำเนินงาน</p>
         </div>
 
         <div class="admin-nav-section">
-            <small class="admin-nav-caption">Admin</small>
-            <a class="admin-nav-link" asp-controller="Admin" asp-action="Dashboard">
+            <small class="admin-nav-caption">Management</small>
+            <a class="admin-nav-link @(currentController == "Admin" && currentAction == "Dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">
                 <span class="admin-nav-icon">D</span>
                 <span>Dashboard</span>
             </a>
-            <a class="admin-nav-link" asp-controller="Admin" asp-action="CustomerList">
+            <a class="admin-nav-link @(currentController == "Admin" && currentAction == "CustomerList" ? "active" : "")" asp-controller="Admin" asp-action="CustomerList">
                 <span class="admin-nav-icon">C</span>
                 <span>Customers</span>
             </a>
-            <a class="admin-nav-link" asp-controller="Admin" asp-action="EmployeeList">
+            <a class="admin-nav-link @(currentController == "Admin" && currentAction == "EmployeeList" ? "active" : "")" asp-controller="Admin" asp-action="EmployeeList">
                 <span class="admin-nav-icon">E</span>
                 <span>Employees</span>
             </a>
-            <a class="admin-nav-link" asp-controller="Admin" asp-action="EmployeeCreate">
-                <span class="admin-nav-icon">A</span>
-                <span>Add Employee</span>
+            <a class="admin-nav-link @(currentController == "Admin" && currentAction == "EmployeeCreate" ? "active" : "")" asp-controller="Admin" asp-action="EmployeeCreate">
+                <span class="admin-nav-icon">+</span>
+                <span>Create Employee</span>
             </a>
         </div>
 
         <div class="admin-nav-section">
-            <small class="admin-nav-caption">Staff Roles</small>
-            <a class="admin-nav-link" href="#">
+            <small class="admin-nav-caption">Appraisal</small>
+            <a class="admin-nav-link @(currentController == "Appraisal" && currentAction == "Queue" ? "active" : "")" asp-controller="Appraisal" asp-action="Queue">
                 <span class="admin-nav-icon">P</span>
                 <span>Appraisal Queue</span>
             </a>
-            <a class="admin-nav-link" href="#">
-                <span class="admin-nav-icon">$</span>
-                <span>Finance Queue</span>
+            <a class="admin-nav-link @(currentController == "Appraisal" && currentAction == "Review" ? "active" : "")" asp-controller="Appraisal" asp-action="Review">
+                <span class="admin-nav-icon">R</span>
+                <span>Review Detail</span>
             </a>
-            <a class="admin-nav-link" href="#">
+        </div>
+
+        <div class="admin-nav-section">
+            <small class="admin-nav-caption">Finance</small>
+            <span class="admin-nav-link disabled">
+                <span class="admin-nav-icon">$</span>
+                <span>Payment Queue</span>
+            </span>
+            <span class="admin-nav-link disabled">
+                <span class="admin-nav-icon">T</span>
+                <span>Transfer Review</span>
+            </span>
+            <span class="admin-nav-link disabled">
+                <span class="admin-nav-icon">R</span>
+                <span>Revenue Summary</span>
+            </span>
+        </div>
+
+        <div class="admin-nav-section">
+            <small class="admin-nav-caption">Shipping</small>
+            <span class="admin-nav-link disabled">
                 <span class="admin-nav-icon">S</span>
                 <span>Shipping Queue</span>
-            </a>
+            </span>
+            <span class="admin-nav-link disabled">
+                <span class="admin-nav-icon">P</span>
+                <span>Prepare Parcel</span>
+            </span>
+            <span class="admin-nav-link disabled">
+                <span class="admin-nav-icon">T</span>
+                <span>Tracking Update</span>
+            </span>
         </div>
 
         <div class="admin-nav-section">
@@ -106,22 +138,11 @@
                     </button>
                 </form>
             }
-            else
-            {
-                <a class="admin-nav-link" asp-controller="Account" asp-action="Login">
-                    <span class="admin-nav-icon">L</span>
-                    <span>Log in</span>
-                </a>
-                <a class="admin-nav-link" asp-controller="Account" asp-action="Register">
-                    <span class="admin-nav-icon">S</span>
-                    <span>Sign up</span>
-                </a>
-            }
         </div>
 
         <div class="admin-sidebar-card section-highlight">
-            <p class="mb-1 fw-bold text-brown">Store health</p>
-            <p class="mb-0 small text-dark">Orders are stable and approval tasks are concentrated in the afternoon shift.</p>
+            <p class="mb-1 fw-bold text-brown">Admin Focus</p>
+            <p class="mb-0 small text-dark">ดูแลข้อมูลลูกค้า บัญชีพนักงาน และภาพรวมงานของทุกฝ่ายในระบบ</p>
         </div>
     </aside>
 
@@ -130,7 +151,7 @@
             @RenderBody()
 
             <footer class="admin-footer">
-                <p class="mb-0">Book'ed Staff Panel using the shared dashboard layout for internal operations.</p>
+                <p class="mb-0">Book'ed Admin Panel for internal management.</p>
             </footer>
         </div>
     </main>
