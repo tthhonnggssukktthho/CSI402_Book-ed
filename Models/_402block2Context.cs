@@ -107,6 +107,21 @@ public partial class _402block2Context : DbContext
                 .HasColumnName("image_url")
                 .UseCollation("utf8mb3_general_ci")
                 .HasCharSet("utf8mb3");
+            entity.Property(e => e.ImageUrl2)
+                .HasMaxLength(500)
+                .HasColumnName("image_url_2")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.ImageUrl3)
+                .HasMaxLength(500)
+                .HasColumnName("image_url_3")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
+            entity.Property(e => e.ImageUrl4)
+                .HasMaxLength(500)
+                .HasColumnName("image_url_4")
+                .UseCollation("utf8mb3_general_ci")
+                .HasCharSet("utf8mb3");
             entity.Property(e => e.Isbn)
                 .HasMaxLength(20)
                 .HasColumnName("isbn")

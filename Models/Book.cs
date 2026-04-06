@@ -29,6 +29,12 @@ public partial class Book
 
     public string? ImageUrl { get; set; }
 
+    public string? ImageUrl2 { get; set; }
+
+    public string? ImageUrl3 { get; set; }
+
+    public string? ImageUrl4 { get; set; }
+
     public string ConditionCode { get; set; } = null!;
 
     public decimal ConditionDiscountPct { get; set; }

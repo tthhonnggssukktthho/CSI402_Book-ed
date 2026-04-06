@@ -1,0 +1,179 @@
+@model _66014444_Project.ViewModels.SellBook.SellBookCreateViewModel
+@{
+    ViewData["Title"] = "ลงข้อมูลขายหนังสือ";
+    Layout = "_Layout";
+}
+
+<section class="customer-profile-page py-4 py-lg-5">
+    <div class="customer-profile-hero mb-4 mb-lg-5">
+        <div>
+            <p class="customer-profile-kicker">Sell Book</p>
+            <h1 class="customer-profile-title">ลงข้อมูลหนังสือที่จะขาย</h1>
+            <p class="customer-profile-subtitle">กรอกข้อมูลหนังสือและอัปโหลดรูปภาพให้ครบถ้วนก่อนส่งเข้าระบบเพื่อรอการประเมิน</p>
+        </div>
+    </div>
+
+    <div class="customer-profile-card">
+        <div class="customer-profile-card-body">
+            <form id="sellBookCreateForm" asp-action="Create" asp-controller="SellBook" method="post" enctype="multipart/form-data" class="row g-3">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+
+                <div class="col-md-6">
+                    <label asp-for="Title" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="Title" class="form-control customer-profile-input" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="CategoryName" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <select asp-for="CategoryName" class="form-select customer-profile-input">
+                        <option value="">เลือกหมวดหมู่หนังสือ</option>
+                        @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category">@category</option>
+                        }
+                    </select>
+                    <span asp-validation-for="CategoryName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="SeriesName" class="form-label"></label>
+                    <input asp-for="SeriesName" class="form-control customer-profile-input" />
+                    <span asp-validation-for="SeriesName" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="VolumeNo" class="form-label"></label>
+                    <input asp-for="VolumeNo" class="form-control customer-profile-input" />
+                    <span asp-validation-for="VolumeNo" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="PublisherName" class="form-label"></label>
+                    <input asp-for="PublisherName" class="form-control customer-profile-input" />
+                    <span asp-validation-for="PublisherName" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="AuthorName" class="form-label"></label>
+                    <input asp-for="AuthorName" class="form-control customer-profile-input" />
+                    <span asp-validation-for="AuthorName" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="PublishYear" class="form-label"></label>
+                    <input asp-for="PublishYear" class="form-control customer-profile-input" />
+                    <span asp-validation-for="PublishYear" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Isbn" class="form-label"></label>
+                    <input asp-for="Isbn" class="form-control customer-profile-input" />
+                    <span asp-validation-for="Isbn" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ConditionCode" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <select asp-for="ConditionCode" class="form-select customer-profile-input">
+                        <option value="">เลือกระดับสภาพหนังสือ</option>
+                        @foreach (var option in Model.ConditionOptions)
+                        {
+                            <option value="@option.Value">@option.Text</option>
+                        }
+                    </select>
+                    <span asp-validation-for="ConditionCode" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="Synopsis" class="form-label"></label>
+                    <textarea asp-for="Synopsis" rows="3" class="form-control customer-profile-input"></textarea>
+                    <span asp-validation-for="Synopsis" class="text-danger"></span>
+                </div>
+
+                <div class="col-12">
+                    <label asp-for="BookDescription" class="form-label"></label>
+                    <textarea asp-for="BookDescription" rows="4" class="form-control customer-profile-input"></textarea>
+                    <span asp-validation-for="BookDescription" class="text-danger"></span>
+                </div>
+
+                <div>
+                    <h3 class="customer-profile-title">อัปโหลดรูปภาพ ปกหน้า ปกหลัง และบริเวณที่มีตำหนิ</h3>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile1" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="ImageFile1" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    <span asp-validation-for="ImageFile1" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile2" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="ImageFile2" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    <span asp-validation-for="ImageFile2" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile3" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="ImageFile3" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    <span asp-validation-for="ImageFile3" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ImageFile4" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="ImageFile4" type="file" accept="image/*" class="form-control customer-profile-input" />
+                    <span asp-validation-for="ImageFile4" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ConditionNote" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <textarea asp-for="ConditionNote" rows="3" class="form-control customer-profile-input" placeholder="เช่น มุมปกมีรอยยับเล็กน้อย"></textarea>
+                    <span asp-validation-for="ConditionNote" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="ProposedPrice" class="form-label"></label><span class="text-danger ms-1">*</span>
+                    <input asp-for="ProposedPrice" class="form-control customer-profile-input" />
+                    <span asp-validation-for="ProposedPrice" class="text-danger"></span>
+                </div>
+
+                <div class="col-12 d-flex gap-2 pt-2">
+                    <a asp-controller="Customer" asp-action="MyBooks" class="btn customer-profile-cancel-btn">กลับไปหน้าหนังสือของฉัน</a>
+                    <button type="button" class="btn customer-profile-save-btn" data-bs-toggle="modal" data-bs-target="#sellBookConfirmModal">ส่งข้อมูลหนังสือขาย</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="sellBookConfirmModal" tabindex="-1" aria-labelledby="sellBookConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content customer-profile-modal-content">
+            <div class="modal-header customer-profile-modal-header">
+                <div>
+                    <p class="customer-profile-kicker mb-1">Confirm Submission</p>
+                    <h2 class="modal-title h4 mb-1" id="sellBookConfirmModalLabel">ยืนยันการส่งข้อมูลขายหนังสือ</h2>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body customer-profile-modal-body">
+                <p class="mb-3">
+                    คุณยืนยันที่จะขายหรือไม่ คุณจะยังทำการแก้ไขข้อมูลได้หลังจากยืนยัน แต่หากผ่านการประเมินแล้วคุณจะไม่สามารถแก้ไขข้อมูลได้
+                </p>
+                <div class="alert alert-warning mb-0">
+                    <strong>Tip :</strong> การกรอกข้อมูลที่ถูกต้องครบถ้วนและถูกต้องทุกช่อง จะทำให้การประเมินเร็วขึ้น
+                </div>
+            </div>
+
+            <div class="modal-footer customer-profile-modal-footer">
+                <button type="button" class="btn customer-profile-cancel-btn" data-bs-dismiss="modal">กลับไปตรวจสอบข้อมูล</button>
+                <button type="submit" form="sellBookCreateForm" class="btn customer-profile-save-btn">ยืนยันการส่งข้อมูล</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
