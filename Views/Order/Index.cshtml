@@ -1,0 +1,66 @@
+@model _66014444_Project.ViewModels.Order.OrderIndexViewModel
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "_Layout";
+}
+
+<section class="catalog-page">
+    <div class="catalog-heading">
+        <div>
+            <p class="catalog-kicker">Orders</p>
+            <h1>รายการคำสั่งซื้อของฉัน</h1>
+            <p class="catalog-subtitle">ติดตามสถานะคำสั่งซื้อ ตั้งแต่การชำระเงินไปจนถึงการจัดส่ง</p>
+        </div>
+        <div class="catalog-summary">
+            <strong>@Model.Orders.Count</strong>
+            <span>คำสั่งซื้อทั้งหมด</span>
+        </div>
+    </div>
+
+    @if (TempData["OrderSuccess"] is string orderMessage)
+    {
+        <div class="alert alert-success">@orderMessage</div>
+    }
+
+    <div class="filter-card">
+        @if (Model.Orders.Count == 0)
+        {
+            <h2>ยังไม่มีคำสั่งซื้อ</h2>
+            <p class="text-muted mb-0">เมื่อคุณสร้างคำสั่งซื้อ รายการจะขึ้นในหน้านี้</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>เลขที่คำสั่งซื้อ</th>
+                            <th>วันที่</th>
+                            <th>จำนวนสินค้า</th>
+                            <th>ยอดรวม</th>
+                            <th>สถานะ</th>
+                            <th>การจัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.OrderNo</td>
+                                <td>@order.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@order.ItemCount</td>
+                                <td>฿@order.TotalAmount.ToString("0.##")</td>
+                                <td>
+                                    <partial name="_OrderStatusBadge" model="order.OrderStatus" />
+                                </td>
+                                <td>
+                                    <a asp-controller="Order" asp-action="Detail" asp-route-id="@order.OrderId" class="btn btn-outline-primary btn-sm">ดูรายละเอียด</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</section>

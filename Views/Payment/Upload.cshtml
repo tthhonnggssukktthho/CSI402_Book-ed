@@ -1,0 +1,75 @@
+@model _66014444_Project.ViewModels.Payment.PaymentUploadViewModel
+@{
+    ViewData["Title"] = "อัปโหลดหลักฐานการชำระเงิน";
+    Layout = "_Layout";
+}
+
+<section class="catalog-page">
+    <div class="catalog-heading">
+        <div>
+            <p class="catalog-kicker">Payment Upload</p>
+            <h1>อัปโหลดหลักฐานการชำระเงิน</h1>
+            <p class="catalog-subtitle">แนบสลิปการโอนเงินเพื่อส่งคำสั่งซื้อเข้าสู่ขั้นตอนตรวจสอบการชำระเงิน</p>
+        </div>
+        <div class="catalog-summary">
+            <strong>@Model.OrderNo</strong>
+            <span>ครบกำหนด @Model.PaymentDueAt.ToString("yyyy-MM-dd HH:mm")</span>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <div class="row g-3">
+            <div class="col-12">
+                <form asp-controller="Payment" asp-action="UploadLater" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="orderId" value="@Model.OrderId" />
+                    <button type="submit" class="btn btn-outline-secondary">ภายหลัง</button>
+                </form>
+            </div>
+
+            <div class="col-12">
+                <form asp-controller="Payment" asp-action="Upload" method="post" enctype="multipart/form-data" class="row g-3">
+            @Html.AntiForgeryToken()
+            <input asp-for="OrderId" type="hidden" />
+            <input asp-for="OrderNo" type="hidden" />
+            <input asp-for="TotalAmount" type="hidden" />
+            <input asp-for="PaymentDueAt" type="hidden" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="col-md-6">
+                <label asp-for="TransferAmount" class="form-label"></label>
+                <input asp-for="TransferAmount" class="form-control" />
+                <span asp-validation-for="TransferAmount" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="TransferDatetime" class="form-label"></label>
+                <input asp-for="TransferDatetime" type="datetime-local" class="form-control" />
+                <span asp-validation-for="TransferDatetime" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="PayerName" class="form-label"></label>
+                <input asp-for="PayerName" class="form-control" />
+                <span asp-validation-for="PayerName" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="EvidenceFile" class="form-label"></label>
+                <input asp-for="EvidenceFile" type="file" class="form-control" accept="image/*,.pdf" />
+                <span asp-validation-for="EvidenceFile" class="text-danger"></span>
+            </div>
+
+            <div class="col-12 d-flex gap-2 pt-2">
+                <button type="submit" class="book-card-button">ยืนยันหลังจากแนบหลักฐาน</button>
+            </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
