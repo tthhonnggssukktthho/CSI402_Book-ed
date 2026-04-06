@@ -2,6 +2,58 @@
     ViewData["Title"] = "Appraisal Queue";
     Layout = "_LayoutStaff";
 }
+@model _66014444_Project.ViewModels.Appraisal.AppraisalQueueViewModel
+
+
 <div class="container">
     <h2>Appraisal Queue</h2>
-    <p>Welcome to the Appraisal Queue!</p>
+    <p>รายการหนังสือที่ลูกค้ายื่นขายและรอการประเมิน</p>
+
+    <table class="table table-striped align-middle table-hover">
+        <thead>
+            <tr>
+                <th>Book Title</th>
+                <th>Seller</th>
+                <th>Category</th>
+                <th>Condition</th>
+                <th>Proposed Price</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Books.Count == 0)
+            {
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">ยังไม่มีหนังสือในคิวประเมิน</td>
+                </tr>
+            }
+            @foreach (var book in Model.Books)
+            {
+                <tr>
+                    <td>
+                        <div class="fw-semibold">@book.Title</div>
+                        @if (!string.IsNullOrWhiteSpace(book.SeriesName) || !string.IsNullOrWhiteSpace(book.VolumeNo))
+                        {
+                            <small class="text-muted">@book.SeriesName @(!string.IsNullOrWhiteSpace(book.VolumeNo) ? $"เล่ม {book.VolumeNo}" : string.Empty)</small>
+                        }
+                    </td>
+                    <td>
+                        <div>@book.SellerDisplayName</div>
+                        <small class="text-muted">@book.SellerUsername</small>
+                    </td>
+                    <td>@book.CategoryName</td>
+                    <td>@book.ConditionCode</td>
+                    <td>@book.ProposedPrice?.ToString("C")</td>
+                    <td>@book.ApprovalStatus</td>
+                    <td>@book.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a href="@Url.Action("Review", "Appraisal", new { id = book.BookId })" class="btn btn-sm btn-outline-primary">Review</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
