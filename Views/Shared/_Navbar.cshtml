@@ -55,11 +55,14 @@
                         <li>
                             <a class="dropdown-item" asp-controller="Customer" asp-action="MyBooks">MyBooks</a>
                         </li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Order" asp-action="Index">Orders</a>
+                        </li>
                         <li><hr class="dropdown-divider" /></li>
                         <li>
                             <form asp-controller="Account" asp-action="Logout" method="post">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="dropdown-item">Logout</button>
+                                <button type="submit" class="dropdown-item text-danger">Logout</button>
                             </form>
                         </li>
                     </ul>

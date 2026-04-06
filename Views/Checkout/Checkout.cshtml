@@ -1,5 +1,215 @@
+@model _66014444_Project.ViewModels.Checkout.CheckoutViewModel
 @{
     ViewData["Title"] = "Checkout";
     Layout = "_Layout";
 }
-<h1>Checkout</h1>
+
+<section class="catalog-page">
+    <div class="catalog-heading">
+        <div>
+            <p class="catalog-kicker">Checkout</p>
+            <h1>ตรวจสอบคำสั่งซื้อ</h1>
+            <p class="catalog-subtitle">ยืนยันที่อยู่ โปรโมชัน และรายการหนังสือก่อนดำเนินการชำระเงิน</p>
+        </div>
+        <div class="catalog-summary">
+            <strong>@Model.Items.Count</strong>
+            <span>รายการที่เลือกซื้อ</span>
+        </div>
+    </div>
+
+    <div class="d-flex flex-column gap-4">
+        <div class="filter-card">
+            <h2>1. ที่อยู่จัดส่ง</h2>
+            @if (Model.HasShippingAddress)
+            {
+                <div class="mb-2"><strong>@Model.ReceiverName</strong></div>
+                <div>@Model.ReceiverPhone</div>
+                <div>@Model.AddressLine1</div>
+                @if (!string.IsNullOrWhiteSpace(Model.AddressLine2))
+                {
+                    <div>@Model.AddressLine2</div>
+                }
+                <div>@Model.Subdistrict @Model.District</div>
+                <div>@Model.Province @Model.PostalCode</div>
+            }
+            else
+            {
+                <p class="text-muted mb-3">ยังไม่มีข้อมูลที่อยู่จัดส่งในโปรไฟล์</p>
+                <a asp-controller="Customer" asp-action="Profile" class="book-card-button">ไปกรอกที่อยู่ในโปรไฟล์</a>
+            }
+        </div>
+
+        <div class="filter-card">
+            <h2>2. โปรโมชัน</h2>
+            @if (Model.Promotions.Count == 0)
+            {
+                <p class="text-muted mb-0">ยังไม่มีโปรโมชันที่ใช้งานได้ในขณะนี้</p>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-3">
+                    @foreach (var promotion in Model.Promotions)
+                    {
+                        <div class="border rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div>
+                                    <div class="fw-semibold">@promotion.PromotionName</div>
+                                    <div class="small text-muted">@promotion.PromotionCode</div>
+                                </div>
+                                <span class="badge text-bg-light">@promotion.PromotionType</span>
+                            </div>
+                            <p class="mb-2 mt-2 small">@promotion.Description</p>
+                            <div class="small text-muted">
+                                ส่วนลด: @(promotion.DiscountValue?.ToString("0.##") ?? "-")
+                                @if (!string.IsNullOrWhiteSpace(promotion.DiscountType))
+                                {
+                                    <span>(@promotion.DiscountType)</span>
+                                }
+                            </div>
+                            @if (promotion.MinOrderAmount.HasValue)
+                            {
+                                <div class="small text-muted">ขั้นต่ำ ฿@promotion.MinOrderAmount.Value.ToString("0.##")</div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+
+            <hr class="my-4" />
+
+            <h3 class="h5 mb-3">ใช้แต้มสะสม</h3>
+            <div class="border rounded-3 p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>แต้มคงเหลือ</span>
+                    <strong>@Model.AvailablePoints แต้ม</strong>
+                </div>
+                <div class="small text-muted mb-3">ใช้ได้สูงสุด @Model.MaxPointsToUse แต้ม โดยคิด 1 แต้ม = 1 บาท</div>
+
+                @if (Model.MaxPointsToUse > 0)
+                {
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="usePointsToggle" />
+                        <label class="form-check-label" for="usePointsToggle">ใช้แต้มสะสมกับคำสั่งซื้อนี้</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="pointsToUseInput" class="form-label">จำนวนแต้มที่ต้องการใช้</label>
+                        <input id="pointsToUseInput"
+                               class="form-control"
+                               type="number"
+                               min="0"
+                               max="@Model.MaxPointsToUse"
+                               value="0"
+                               disabled />
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted">แต้มสะสมยังไม่เพียงพอสำหรับการใช้งานในคำสั่งซื้อนี้</div>
+                }
+            </div>
+        </div>
+
+        <div class="filter-card">
+            <h2>3. หนังสือและสรุปยอด</h2>
+            @if (Model.Items.Count == 0)
+            {
+                <p class="text-muted mb-3">ยังไม่มีสินค้าในตะกร้า</p>
+                <a asp-controller="Cart" asp-action="CartIndex" class="book-card-button">กลับไปที่ตะกร้า</a>
+            }
+            else
+            {
+                <div class="d-flex flex-column gap-3 mb-4">
+                    @foreach (var item in Model.Items)
+                    {
+                        <div class="d-flex gap-3 align-items-start border-bottom pb-3">
+                            <div class="border rounded-3 overflow-hidden bg-light" style="width: 64px; height: 84px;">
+                                @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid w-100 h-100" style="object-fit: cover;" />
+                                }
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-semibold">@item.Title</div>
+                                <div class="small text-muted">@item.SeriesName</div>
+                                <div class="small text-muted">@item.ConditionCode</div>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-semibold">฿@item.NetAmount.ToString("0.##")</div>
+                                <div class="small text-muted">จาก ฿@item.UnitPrice.ToString("0.##")</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span>ราคาหนังสือรวม</span>
+                    <span>฿@Model.SubtotalAmount.ToString("0.##")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>ส่วนลดตามสภาพ</span>
+                    <span>- ฿@Model.ConditionDiscountAmount.ToString("0.##")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>ส่วนลดโปรโมชัน</span>
+                    <span id="promotionDiscountValue">- ฿@Model.PromotionDiscountAmount.ToString("0.##")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>ส่วนลดจากแต้มสะสม</span>
+                    <span id="pointsDiscountValue">- ฿0</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>ค่าจัดส่ง</span>
+                    <span id="shippingFeeValue">฿@Model.ShippingFee.ToString("0.##")</span>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>ยอดชำระทั้งหมด</strong>
+                    <strong class="fs-5 text-brown" id="checkoutTotalValue">฿@Model.TotalAmount.ToString("0.##")</strong>
+                </div>
+                <div class="pt-3 d-flex justify-content-end">
+                    <a asp-controller="Payment" asp-action="Index" class="book-card-button">ชำระเงิน</a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        (() => {
+            const usePointsToggle = document.getElementById("usePointsToggle");
+            const pointsInput = document.getElementById("pointsToUseInput");
+            const pointsDiscountValue = document.getElementById("pointsDiscountValue");
+            const totalValue = document.getElementById("checkoutTotalValue");
+
+            if (!usePointsToggle || !pointsInput || !pointsDiscountValue || !totalValue) {
+                return;
+            }
+
+            const baseTotal = @Model.TotalAmount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            const maxPoints = @Model.MaxPointsToUse;
+
+            const render = () => {
+                pointsInput.disabled = !usePointsToggle.checked;
+
+                let points = Number(pointsInput.value || 0);
+                if (!usePointsToggle.checked) {
+                    points = 0;
+                }
+
+                if (points < 0) points = 0;
+                if (points > maxPoints) points = maxPoints;
+                pointsInput.value = points;
+
+                const total = Math.max(0, baseTotal - points);
+                pointsDiscountValue.textContent = `- ฿${points.toFixed(0)}`;
+                totalValue.textContent = `฿${total.toFixed(2).replace(/\.00$/, "")}`;
+            };
+
+            usePointsToggle.addEventListener("change", render);
+            pointsInput.addEventListener("input", render);
+            render();
+        })();
+    </script>
+}
