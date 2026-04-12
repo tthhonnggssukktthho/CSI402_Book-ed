@@ -1,0 +1,80 @@
+@model _66014444_Project.ViewModels.Shipping.ShippingUpdateTrackingViewModel
+@{
+    ViewData["Title"] = "อัปเดตเลขติดตามและสถานะจัดส่ง";
+    Layout = "_LayoutStaff";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-lg-5">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                <div>
+                    <h2 class="mb-1">อัปเดตเลขติดตามและสถานะจัดส่ง</h2>
+                    <p class="text-muted mb-0">คำสั่งซื้อ @Model.OrderNo</p>
+                </div>
+                <a asp-controller="Shipping" asp-action="Queue" class="btn btn-outline-secondary">กลับไปคิวจัดส่ง</a>
+            </div>
+
+            @if (TempData["ShippingSuccess"] is string successMessage)
+            {
+                <div class="alert alert-success">@successMessage</div>
+            }
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <div class="border rounded-3 p-4 bg-light h-100">
+                        <h4 class="mb-3">ข้อมูลปัจจุบัน</h4>
+                        <div class="mb-2">
+                            <small class="text-muted d-block">เลขที่คำสั่งซื้อ</small>
+                            <strong>@Model.OrderNo</strong>
+                        </div>
+                        <div class="mb-2">
+                            <small class="text-muted d-block">สถานะปัจจุบัน</small>
+                            <strong class="text-capitalize">@Model.CurrentStatus</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-8">
+                    <form asp-controller="Shipping" asp-action="UpdateTracking" method="post" class="border rounded-3 p-4">
+                        @Html.AntiForgeryToken()
+                        <input asp-for="ShipmentId" type="hidden" />
+                        <input asp-for="OrderNo" type="hidden" />
+                        <input asp-for="CurrentStatus" type="hidden" />
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label asp-for="CarrierName" class="form-label">บริษัทขนส่ง</label>
+                                <select asp-for="CarrierName" asp-items="Model.CarrierOptions" class="form-select">
+                                    <option value="">เลือกบริษัทขนส่ง</option>
+                                </select>
+                                <span asp-validation-for="CarrierName" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="ShipmentStatus" class="form-label">สถานะจัดส่ง</label>
+                                <select asp-for="ShipmentStatus" asp-items="Model.StatusOptions" class="form-select"></select>
+                                <span asp-validation-for="ShipmentStatus" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="TrackingNo" class="form-label">เลขติดตามพัสดุ</label>
+                                <input asp-for="TrackingNo" class="form-control" />
+                                <span asp-validation-for="TrackingNo" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-12 d-flex gap-2 pt-2">
+                                <a asp-controller="Shipping" asp-action="PackDetail" asp-route-id="@Model.ShipmentId" class="btn btn-outline-secondary">กลับไปดูรายละเอียด</a>
+                                <button type="submit" class="btn btn-primary">บันทึกการอัปเดต</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

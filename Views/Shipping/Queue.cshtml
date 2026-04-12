@@ -1,0 +1,63 @@
+@model _66014444_Project.ViewModels.Shipping.ShippingQueueViewModel
+@{
+    ViewData["Title"] = "คิวจัดส่ง";
+    Layout = "_LayoutStaff";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <div class="mb-4">
+                <h2 class="mb-1">คิวจัดส่ง</h2>
+                <p class="text-muted mb-0">รายการออเดอร์ที่ชำระเงินผ่านแล้วและพร้อมเข้าสู่ขั้นตอนแพ็กสินค้า</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>เลขที่คำสั่งซื้อ</th>
+                            <th>ลูกค้า</th>
+                            <th>จังหวัด</th>
+                            <th>จำนวนรายการ</th>
+                            <th>สถานะจัดส่ง</th>
+                            <th>Tracking</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Shipments.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-4">ยังไม่มีรายการในคิวจัดส่ง</td>
+                            </tr>
+                        }
+
+                        @foreach (var item in Model.Shipments)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">@item.OrderNo</div>
+                                    <div class="small text-muted">@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</div>
+                                </td>
+                                <td>@item.CustomerDisplayName</td>
+                                <td>@item.SnapProvince</td>
+                                <td>@item.ItemCount</td>
+                                <td>
+                                    <span class="badge @(item.ShipmentStatus == "delivered" ? "bg-success" : item.ShipmentStatus == "shipped" ? "bg-primary" : item.ShipmentStatus == "packed" ? "bg-info text-dark" : "bg-warning text-dark") text-capitalize">
+                                        @item.ShipmentStatus
+                                    </span>
+                                </td>
+                                <td>@(string.IsNullOrWhiteSpace(item.TrackingNo) ? "-" : item.TrackingNo)</td>
+                                <td class="d-flex gap-2 flex-wrap">
+                                    <a asp-controller="Shipping" asp-action="PackDetail" asp-route-id="@item.ShipmentId" class="btn btn-outline-secondary btn-sm">ดูรายละเอียด</a>
+                                    <a asp-controller="Shipping" asp-action="UpdateTracking" asp-route-id="@item.ShipmentId" class="btn btn-outline-primary btn-sm">อัปเดตจัดส่ง</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

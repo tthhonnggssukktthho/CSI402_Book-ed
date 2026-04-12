@@ -1,0 +1,94 @@
+@model _66014444_Project.ViewModels.Shipping.ShippingPackDetailViewModel
+@{
+    ViewData["Title"] = "รายละเอียดสำหรับแพ็กสินค้า";
+    Layout = "_LayoutStaff";
+}
+
+<div class="container py-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-lg-5">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+                <div>
+                    <h2 class="mb-1">รายละเอียดสำหรับแพ็กสินค้า</h2>
+                    <p class="text-muted mb-0">คำสั่งซื้อ @Model.OrderNo</p>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary" onclick="window.print()">พิมพ์จ่าหน้าพัสดุ</button>
+                    <a asp-controller="Shipping" asp-action="UpdateTracking" asp-route-id="@Model.ShipmentId" class="btn btn-primary">ไปหน้าอัปเดตจัดส่ง</a>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="border rounded-3 p-4 h-100">
+                        <h4 class="mb-3">รายการหนังสือในกล่อง</h4>
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>หนังสือ</th>
+                                        <th>สภาพ</th>
+                                        <th>ราคา</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Items)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="fw-semibold">@item.BookTitleSnapshot</div>
+                                                <div class="small text-muted">@item.SeriesNameSnapshot</div>
+                                            </td>
+                                            <td>@item.ConditionCodeSnap</td>
+                                            <td>@item.NetAmount.ToString("N2") บาท</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="border rounded-3 p-4 bg-light h-100">
+                        <h4 class="mb-3">ข้อมูลผู้รับสำหรับจ่าหน้า</h4>
+                        <div class="mb-3">
+                            <div class="fw-semibold">@Model.SnapReceiverName</div>
+                            <div>@Model.SnapReceiverPhone</div>
+                        </div>
+                        <div class="mb-3">
+                            <div>@Model.SnapAddressLine1</div>
+                            @if (!string.IsNullOrWhiteSpace(Model.SnapAddressLine2))
+                            {
+                                <div>@Model.SnapAddressLine2</div>
+                            }
+                            <div>@Model.SnapSubdistrict @Model.SnapDistrict</div>
+                            <div>@Model.SnapProvince @Model.SnapPostalCode</div>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>ลูกค้า</span>
+                            <strong>@Model.CustomerDisplayName</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>สถานะจัดส่ง</span>
+                            <strong class="text-capitalize">@Model.ShipmentStatus</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>บริษัทขนส่ง</span>
+                            <strong>@(string.IsNullOrWhiteSpace(Model.CarrierName) ? "-" : Model.CarrierName)</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>เลขติดตาม</span>
+                            <strong>@(string.IsNullOrWhiteSpace(Model.TrackingNo) ? "-" : Model.TrackingNo)</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>ยอดรวมออเดอร์</span>
+                            <strong>@Model.TotalAmount.ToString("N2") บาท</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
