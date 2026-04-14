@@ -86,6 +86,29 @@ public class FinanceController : Controller
         payment.Order.OrderStatus = "payment_approved";
         payment.Order.UpdatedAt = now;
 
+        var purchasedBookIds = payment.Order.OrderItems
+            .Select(item => item.BookId)
+            .Distinct()
+            .ToList();
+
+        var purchasedBooks = _db.Books
+            .Where(book => purchasedBookIds.Contains(book.BookId))
+            .ToList();
+
+        foreach (var book in purchasedBooks)
+        {
+            book.SaleStatus = "sold";
+            book.UpdatedAt = now;
+        }
+
+        var cartItemsToRemove = _db.CartItems
+            .Where(ci => purchasedBookIds.Contains(ci.BookId))
+            .ToList();
+        if (cartItemsToRemove.Count > 0)
+        {
+            _db.CartItems.RemoveRange(cartItemsToRemove);
+        }
+
         if (payment.Order.Shipment is null)
         {
             _db.Shipments.Add(new Shipment
@@ -141,6 +164,21 @@ public class FinanceController : Controller
         payment.Order.PreviousStatus = payment.Order.OrderStatus;
         payment.Order.OrderStatus = "pending_payment";
         payment.Order.UpdatedAt = now;
+
+        var reservedBookIds = payment.Order.OrderItems
+            .Select(item => item.BookId)
+            .Distinct()
+            .ToList();
+
+        var reservedBooks = _db.Books
+            .Where(book => reservedBookIds.Contains(book.BookId) && book.SaleStatus == "reserved")
+            .ToList();
+
+        foreach (var book in reservedBooks)
+        {
+            book.SaleStatus = "ready_for_sale";
+            book.UpdatedAt = now;
+        }
 
         _db.SaveChanges();
         TempData["FinanceSuccess"] = "บันทึกผลการไม่อนุมัติเรียบร้อยแล้ว";

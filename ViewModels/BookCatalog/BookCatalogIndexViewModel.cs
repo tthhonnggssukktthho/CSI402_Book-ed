@@ -4,10 +4,11 @@ public class BookCatalogIndexViewModel
 {
     public List<BookCardViewModel> Books { get; set; } = new();
     public string? SearchKeyword { get; set; }
+    public string SearchType { get; set; } = "title";
     public string? FilterCategory { get; set; }
     public string? FilterCondition { get; set; }
-    public decimal? PriceMin { get; set; }
-    public decimal? PriceMax { get; set; }
+    public string? PriceRange { get; set; }
+    public string SortBy { get; set; } = "recommended";
     public int CurrentPage { get; set; } = 1;
     public int TotalPages { get; set; } = 1;
     public int TotalItems { get; set; }
@@ -22,6 +23,7 @@ public class BookCardViewModel
     public string? SeriesName { get; set; }
     public string? VolumeNo { get; set; }
     public string? AuthorName { get; set; }
+    public string? Isbn { get; set; }
     public string? CategoryName { get; set; }
     public string? ImageUrl { get; set; }
     public string ConditionCode { get; set; } = string.Empty;

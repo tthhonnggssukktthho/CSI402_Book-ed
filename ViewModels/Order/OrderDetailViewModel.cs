@@ -42,6 +42,7 @@ public class OrderDetailViewModel
     public string EvidenceUrl { get; set; }
     public string RejectReason { get; set; }
     public bool CanUploadPayment { get; set; }  // true เมื่อ order_status = pending_payment
+    public bool CanConfirmDelivery { get; set; }
 
     // การจัดส่ง
     public string ShipmentStatus { get; set; }

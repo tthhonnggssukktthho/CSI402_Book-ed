@@ -17,21 +17,31 @@
         </div>
     </div>
 
+    @if (TempData["OrderSuccess"] is string orderSuccess)
+    {
+        <div class="alert alert-success">@orderSuccess</div>
+    }
+
+    @if (TempData["OrderError"] is string orderError)
+    {
+        <div class="alert alert-danger">@orderError</div>
+    }
+
     <div class="d-flex flex-column gap-4">
         <div class="filter-card">
             <h2>สถานะคำสั่งซื้อ</h2>
             <div class="row g-3">
                 <div class="col-md-4">
                     <strong>การชำระเงิน</strong>
-                    <div>@Model.PaymentStatus</div>
+                    <div><partial name="_PaymentStatusBadge" model="Model.PaymentStatus" /></div>
                 </div>
                 <div class="col-md-4">
                     <strong>การอนุมัติ</strong>
-                    <div>@Model.OrderStatus</div>
+                    <div><partial name="_OrderStatusBadge" model="Model.OrderStatus" /></div>
                 </div>
                 <div class="col-md-4">
                     <strong>การจัดส่ง</strong>
-                    <div>@Model.ShipmentStatus</div>
+                    <div><partial name="_ShipmentStatusBadge" model="Model.ShipmentStatus" /></div>
                 </div>
             </div>
         </div>
@@ -122,5 +132,14 @@
                 </div>
             }
         </div>
+        @if (Model.CanConfirmDelivery)
+        {
+            <div>
+                <form asp-controller="Order" asp-action="ConfirmDelivered" asp-route-id="@Model.OrderId" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success" style="float: right;">ฉันได้รับสินค้าแล้ว</button>
+                </form>
+            </div>
+        }
     </div>
 </section>

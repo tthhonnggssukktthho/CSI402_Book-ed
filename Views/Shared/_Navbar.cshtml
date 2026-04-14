@@ -1,15 +1,17 @@
 @{
     var activeCategory = (ViewData["ActiveCategory"] as string) ?? "All";
+    var currentSearchType = (ViewData["SearchType"] as string) ?? "title";
+    var currentSearchKeyword = (ViewData["SearchKeyword"] as string) ?? string.Empty;
     var isAuthenticated = User.Identity?.IsAuthenticated == true;
     var isCustomer = User.IsInRole("customer");
     var customerName = isCustomer ? User.Identity?.Name : null;
     var categories = new[]
     {
-        new { Key = "Romance", Label = "โรแมนซ์" },
-        new { Key = "Horror", Label = "สยองขวัญ" },
-        new { Key = "Fantasy", Label = "แฟนตาซี" },
-        new { Key = "Y", Label = "วาย/ยูริ" },
-        new { Key = "Mystery", Label = "สืบสวน" }
+        new { Key = "โรแมนซ์", Label = "โรแมนซ์" },
+        new { Key = "สยองขวัญ", Label = "สยองขวัญ" },
+        new { Key = "แฟนตาซี", Label = "แฟนตาซี" },
+        new { Key = "วาย/ยูริ", Label = "วาย/ยูริ" },
+        new { Key = "สืบสวน", Label = "สืบสวน" }
     };
 }
 
@@ -20,27 +22,28 @@
             <span>Book'ed</span>
         </a>
 
-        <form class="store-search" role="search">
+        <form asp-controller="BookCatalog" asp-action="Index" method="get" class="store-search" role="search">
             <label class="visually-hidden" for="searchType">Search type</label>
-            <select id="searchType" class="store-search-type" aria-label="Search type">
-                <option>ชื่อเรื่อง</option>
-                <option>ผู้แต่ง</option>
-                <option>ซีรีส์</option>
-                <option>ISBN</option>
+            <select id="searchType" name="searchType" class="store-search-type" aria-label="Search type">
+                <option value="title" selected="@(currentSearchType == "title" ? "selected" : null)">ชื่อเรื่อง</option>
+                <option value="author" selected="@(currentSearchType == "author" ? "selected" : null)">ผู้แต่ง</option>
+                <option value="series" selected="@(currentSearchType == "series" ? "selected" : null)">ซีรีส์</option>
+                <option value="isbn" selected="@(currentSearchType == "isbn" ? "selected" : null)">ISBN</option>
             </select>
 
             <label class="visually-hidden" for="searchInput">Search books</label>
-            <input id="searchInput" type="search" class="store-search-input" placeholder="ค้นหาหนังสือที่อยากอ่านต่อ..." />
+            <input id="searchInput" name="searchKeyword" type="search" value="@currentSearchKeyword" class="store-search-input" placeholder="ค้นหาหนังสือที่อยากอ่านต่อ..." />
+
+            @if (!string.Equals(activeCategory, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                <input type="hidden" name="category" value="@activeCategory" />
+            }
 
             <button type="submit" class="store-search-button">ค้นหา</button>
         </form>
 
         <div class="store-actions">
-            <button type="button" class="store-icon-button" aria-label="Notifications">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-4H5l1.6-1.8V11a5.4 5.4 0 0 1 4.4-5.3V5a1 1 0 1 1 2 0v.7A5.4 5.4 0 0 1 17.4 11v5.2L19 18Z" fill="currentColor" />
-                </svg>
-            </button>
+            
 
             @if (isCustomer)
             {
@@ -70,7 +73,7 @@
             }
             else if (isAuthenticated)
             {
-                <a class="store-pill-button store-pill-secondary" asp-controller="Admin" asp-action="Dashboard">แดชบอร์ด</a>
+                <a class="store-pill-button store-pill-secondary" asp-controller="Admin" asp-action="Dashboard">Welcome</a>
                 <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="store-pill-button store-pill-secondary">ออกจากระบบ</button>
@@ -92,10 +95,16 @@
     </div>
 
     <div class="store-category-row">
+        <a class="store-category-link @(activeCategory == "All" ? "is-active" : string.Empty)" asp-controller="BookCatalog" asp-action="Index">ทั้งหมด</a>
         @foreach (var category in categories)
         {
             var isActive = activeCategory == category.Key;
-            <a class="store-category-link @(isActive ? "is-active" : "")" href="#">@category.Label</a>
+            <a class="store-category-link @(isActive ? "is-active" : "")"
+               asp-controller="BookCatalog"
+               asp-action="Index"
+               asp-route-category="@category.Key"
+               asp-route-searchType="@currentSearchType"
+               asp-route-searchKeyword="@currentSearchKeyword">@category.Label</a>
         }
     </div>
 

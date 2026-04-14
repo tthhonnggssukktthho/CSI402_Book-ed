@@ -120,6 +120,7 @@ public class AppraisalController : Controller
         {
             case "approve":
                 book.ApprovalStatus = "approved";
+                book.SaleStatus = "ready_for_sale";
                 book.ApprovedPrice = model.ApprovedPrice;
                 book.RejectionReason = null;
                 book.ReviewedAt = DateTime.Now;
@@ -132,6 +133,7 @@ public class AppraisalController : Controller
 
             case "reject":
                 book.ApprovalStatus = "rejected";
+                book.SaleStatus = "draft";
                 book.RejectionReason = model.RejectionReason?.Trim();
                 book.ReviewedAt = DateTime.Now;
                 if (reviewerEmployeeId.HasValue)

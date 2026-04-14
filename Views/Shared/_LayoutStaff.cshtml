@@ -52,13 +52,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-2 gap-lg-3">
-            <button type="button" class="btn admin-notify-btn position-relative">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M10 5a2 2 0 1 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3H4a4 4 0 0 0 2-3v-3a7 7 0 0 1 4-6" />
-                    <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
-                </svg>
-                <span class="admin-notify-badge">3</span>
-            </button>
+            
 
             <div class="admin-profile">
                 <div class="admin-avatar">@staffAvatar</div>
@@ -79,8 +73,8 @@
         <div class="admin-nav-section">
             <small class="admin-nav-caption">Management</small>
             <a class="admin-nav-link @(currentController == "Admin" && currentAction == "Dashboard" ? "active" : "")" asp-controller="Admin" asp-action="Dashboard">
-                <span class="admin-nav-icon">D</span>
-                <span>Dashboard</span>
+                <span class="admin-nav-icon">W</span>
+                <span>Welcome</span>
             </a>
             <a class="admin-nav-link @(currentController == "Admin" && currentAction == "CustomerList" ? "active" : "")" asp-controller="Admin" asp-action="CustomerList">
                 <span class="admin-nav-icon">C</span>
@@ -156,7 +150,7 @@
             @RenderBody()
 
             <footer class="admin-footer">
-                <p class="mb-0">Book'ed Admin Panel for internal management.</p>
+                <p class="mb-0">Book'ed Staff Panel for internal management.</p>
             </footer>
         </div>
     </main>

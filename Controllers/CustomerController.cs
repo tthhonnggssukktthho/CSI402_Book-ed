@@ -130,28 +130,49 @@ public class CustomerController : Controller
             return NotFound();
         }
 
+        var purchasedBooks = _db.OrderItems
+            .Where(oi => oi.Order.CustomerId == customer.CustomerId && oi.Order.OrderStatus != "pending_payment")
+            .OrderByDescending(oi => oi.Order.CreatedAt)
+            .Select(oi => new PurchasedBookItemViewModel
+            {
+                OrderId = oi.OrderId,
+                OrderNo = oi.Order.OrderNo,
+                BookId = oi.BookId,
+                Title = oi.BookTitleSnapshot,
+                SeriesName = oi.SeriesNameSnapshot,
+                ConditionCode = oi.ConditionCodeSnap,
+                NetAmount = oi.NetAmount,
+                PurchasedAt = oi.Order.CreatedAt,
+                OrderStatus = oi.Order.OrderStatus,
+                ImageUrl = oi.Book.ImageUrl
+            })
+            .ToList();
+
+        var sellingBooks = _db.Books
+            .Where(b => b.SellerCustomerId == customer.CustomerId)
+            .OrderByDescending(b => b.CreatedAt)
+            .Select(b => new MyBookItemViewModel
+            {
+                BookId = b.BookId,
+                Title = b.Title,
+                SeriesName = b.SeriesName,
+                VolumeNo = b.VolumeNo,
+                ConditionCode = b.ConditionCode,
+                ConditionNote = b.ConditionNote,
+                ProposedPrice = b.ProposedPrice,
+                ApprovedPrice = b.ApprovedPrice,
+                ApprovalStatus = b.ApprovalStatus,
+                SaleStatus = b.SaleStatus,
+                ImageUrl = b.ImageUrl,
+                CreatedAt = b.CreatedAt,
+                CanEdit = b.ApprovalStatus == "pending" || b.ApprovalStatus == "rejected"
+            })
+            .ToList();
+
         var model = new MyBooksViewModel
         {
-            SellingBooks = _db.Books
-                .Where(b => b.SellerCustomerId == customer.CustomerId)
-                .OrderByDescending(b => b.CreatedAt)
-                .Select(b => new MyBookItemViewModel
-                {
-                    BookId = b.BookId,
-                    Title = b.Title,
-                    SeriesName = b.SeriesName,
-                    VolumeNo = b.VolumeNo,
-                    ConditionCode = b.ConditionCode,
-                    ConditionNote = b.ConditionNote,
-                    ProposedPrice = b.ProposedPrice,
-                    ApprovedPrice = b.ApprovedPrice,
-                    ApprovalStatus = b.ApprovalStatus,
-                    SaleStatus = b.SaleStatus,
-                    ImageUrl = b.ImageUrl,
-                    CreatedAt = b.CreatedAt,
-                    CanEdit = b.ApprovalStatus == "pending" || b.ApprovalStatus == "rejected"
-                })
-                .ToList()
+            PurchasedBooks = purchasedBooks,
+            SellingBooks = sellingBooks
         };
 
         return View(model);

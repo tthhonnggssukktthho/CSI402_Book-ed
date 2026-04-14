@@ -112,6 +112,7 @@ public class OrderController : Controller
             EvidenceUrl = payment?.EvidenceUrl ?? string.Empty,
             RejectReason = payment?.RejectReason ?? string.Empty,
             CanUploadPayment = order.OrderStatus == "pending_payment",
+            CanConfirmDelivery = order.Shipment?.ShipmentStatus == "shipped",
             ShipmentStatus = order.Shipment?.ShipmentStatus ?? "waiting_payment_verification",
             CarrierName = order.Shipment?.CarrierName ?? string.Empty,
             TrackingNo = order.Shipment?.TrackingNo ?? string.Empty,
@@ -120,5 +121,58 @@ public class OrderController : Controller
         };
 
         return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult ConfirmDelivered(int id)
+    {
+        var customerIdClaim = User.FindFirst("customer_id")?.Value;
+        if (!int.TryParse(customerIdClaim, out var customerId))
+        {
+            return Challenge();
+        }
+
+        var order = _db.Orders
+            .Include(o => o.Shipment)
+            .FirstOrDefault(o => o.OrderId == id && o.CustomerId == customerId);
+
+        if (order is null)
+        {
+            return NotFound();
+        }
+
+        if (order.Shipment is null)
+        {
+            TempData["OrderError"] = "ไม่พบข้อมูลการจัดส่งของคำสั่งซื้อนี้";
+            return RedirectToAction(nameof(Detail), new { id });
+        }
+
+        if (order.Shipment.ShipmentStatus == "delivered")
+        {
+            TempData["OrderSuccess"] = "คำสั่งซื้อนี้ถูกยืนยันรับสินค้าแล้ว";
+            return RedirectToAction(nameof(Detail), new { id });
+        }
+
+        if (order.Shipment.ShipmentStatus != "shipped")
+        {
+            TempData["OrderError"] = "ยังไม่สามารถยืนยันรับสินค้าได้ เนื่องจากสถานะจัดส่งยังไม่ใช่ จัดส่งแล้ว";
+            return RedirectToAction(nameof(Detail), new { id });
+        }
+
+        var now = DateTime.Now;
+        order.Shipment.ShipmentStatus = "delivered";
+        order.Shipment.ShippedAt ??= now;
+        order.Shipment.DeliveredAt ??= now;
+        order.Shipment.UpdatedAt = now;
+
+        order.PreviousStatus = order.OrderStatus;
+        order.OrderStatus = "completed";
+        order.UpdatedAt = now;
+
+        _db.SaveChanges();
+
+        TempData["OrderSuccess"] = "ยืนยันรับสินค้าเรียบร้อยแล้ว";
+        return RedirectToAction(nameof(Detail), new { id });
     }
 }

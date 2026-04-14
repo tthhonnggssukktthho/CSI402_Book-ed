@@ -12,6 +12,8 @@ public class CartController : Controller
 {
     private readonly _402block2Context _db;
 
+    private static readonly string[] SellableStatuses = ["ready_for_sale", "draft"];
+
     public CartController(_402block2Context db)
     {
         _db = db;
@@ -51,7 +53,7 @@ public class CartController : Controller
                         ConditionDiscountPct = conditionDiscountPct,
                         FinalPrice = item.UnitPrice * (1 - (conditionDiscountPct / 100m)),
                         SaleStatus = item.Book.SaleStatus,
-                        IsAvailable = !string.Equals(item.Book.SaleStatus, "sold", StringComparison.OrdinalIgnoreCase),
+                        IsAvailable = SellableStatuses.Contains(item.Book.SaleStatus),
                         AddedAt = item.AddedAt
                     };
                 })
@@ -74,10 +76,11 @@ public class CartController : Controller
             return Challenge();
         }
 
-        var book = _db.Books.FirstOrDefault(b => b.BookId == bookId && b.ApprovalStatus == "approved");
+        var book = _db.Books.FirstOrDefault(b => b.BookId == bookId && b.ApprovalStatus == "approved" && SellableStatuses.Contains(b.SaleStatus));
         if (book is null)
         {
-            return NotFound();
+            TempData["CartSuccess"] = "หนังสือเล่มนี้ไม่พร้อมขายแล้ว";
+            return RedirectToAction("Index", "BookCatalog");
         }
 
         var alreadyInCart = _db.CartItems.Any(c => c.CustomerId == customerId && c.BookId == bookId);

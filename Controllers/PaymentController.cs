@@ -252,10 +252,19 @@ public class PaymentController : Controller
         _db.Orders.Add(order);
         _db.SaveChanges();
 
+        var orderedBookIds = cartItems
+            .Select(item => item.BookId)
+            .Distinct()
+            .ToList();
+
         foreach (var cartItem in cartItems)
         {
             var conditionDiscountPct = ConditionDiscountHelper.ResolvePercent(cartItem.Book.ConditionCode, cartItem.Book.ConditionDiscountPct);
             var discountAmount = cartItem.UnitPrice * (conditionDiscountPct / 100m);
+
+            cartItem.Book.SaleStatus = "reserved";
+            cartItem.Book.UpdatedAt = now;
+
             _db.OrderItems.Add(new OrderItem
             {
                 OrderId = order.OrderId,
@@ -280,6 +289,14 @@ public class PaymentController : Controller
             CreatedAt = now,
             UpdatedAt = now
         });
+
+        var staleCartItems = _db.CartItems
+            .Where(ci => orderedBookIds.Contains(ci.BookId) && ci.CustomerId != customerId)
+            .ToList();
+        if (staleCartItems.Count > 0)
+        {
+            _db.CartItems.RemoveRange(staleCartItems);
+        }
 
         _db.CartItems.RemoveRange(cartItems);
         _db.SaveChanges();

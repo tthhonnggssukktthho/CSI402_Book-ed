@@ -8,6 +8,7 @@ public class ShippingUpdateTrackingViewModel
     public int ShipmentId { get; set; }
     public string OrderNo { get; set; } = string.Empty;
     public string CurrentStatus { get; set; } = string.Empty;
+    public bool IsCarrierLocked { get; set; }
 
     [Required(ErrorMessage = "กรุณาเลือกบริษัทขนส่ง")]
     [StringLength(100)]

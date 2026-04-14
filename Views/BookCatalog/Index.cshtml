@@ -16,37 +16,44 @@
         </div>
     </div>
 
-    <div class="catalog-layout">
+    <form asp-controller="BookCatalog" asp-action="Index" method="get" class="catalog-layout">
         <aside class="catalog-sidebar">
             <div class="filter-card">
                 <h2>กรองสินค้า</h2>
 
+                <input type="hidden" name="searchKeyword" value="@Model.SearchKeyword" />
+                <input type="hidden" name="searchType" value="@Model.SearchType" />
+
                 <div class="filter-group">
                     <span class="filter-label">หมวดหมู่</span>
-                    <label><input type="checkbox" checked /> ทั้งหมด</label>
+                    <label><input type="radio" name="category" value="" checked="@(string.IsNullOrWhiteSpace(Model.FilterCategory) ? "checked" : null)" /> ทั้งหมด</label>
                     @foreach (var category in Model.Categories)
                     {
-                        <label><input type="checkbox" /> @category</label>
+                        <label><input type="radio" name="category" value="@category" checked="@(string.Equals(Model.FilterCategory, category, StringComparison.OrdinalIgnoreCase) ? "checked" : null)" /> @category</label>
                     }
                 </div>
 
                 <div class="filter-group">
                     <span class="filter-label">สภาพหนังสือ</span>
-                    <label><input type="checkbox" checked /> เหมือนใหม่</label>
-                    <label><input type="checkbox" /> สภาพดี</label>
-                    <label><input type="checkbox" /> มีตำหนิเล็กน้อย</label>
-                    <label><input type="checkbox" /> มีตำหนิชัดเจน</label>
+                    <label><input type="radio" name="condition" value="" checked="@(string.IsNullOrWhiteSpace(Model.FilterCondition) ? "checked" : null)" /> ทั้งหมด</label>
+                    <label><input type="radio" name="condition" value="LIKE_NEW" checked="@(Model.FilterCondition == "LIKE_NEW" ? "checked" : null)" /> เหมือนใหม่</label>
+                    <label><input type="radio" name="condition" value="GOOD" checked="@(Model.FilterCondition == "GOOD" ? "checked" : null)" /> สภาพดี</label>
+                    <label><input type="radio" name="condition" value="MINOR_DEFECT" checked="@(Model.FilterCondition == "MINOR_DEFECT" ? "checked" : null)" /> มีตำหนิเล็กน้อย</label>
+                    <label><input type="radio" name="condition" value="MAJOR_DEFECT" checked="@(Model.FilterCondition == "MAJOR_DEFECT" ? "checked" : null)" /> มีตำหนิชัดเจน</label>
                 </div>
 
                 <div class="filter-group">
                     <span class="filter-label">ช่วงราคา</span>
-                    <label><input type="radio" name="priceRange" checked /> ทั้งหมด</label>
-                    <label><input type="radio" name="priceRange" /> ต่ำกว่า 200 บาท</label>
-                    <label><input type="radio" name="priceRange" /> 200 - 300 บาท</label>
-                    <label><input type="radio" name="priceRange" /> มากกว่า 300 บาท</label>
+                    <label><input type="radio" name="priceRange" value="" checked="@(string.IsNullOrWhiteSpace(Model.PriceRange) ? "checked" : null)" /> ทั้งหมด</label>
+                    <label><input type="radio" name="priceRange" value="under_200" checked="@(Model.PriceRange == "under_200" ? "checked" : null)" /> ต่ำกว่า 200 บาท</label>
+                    <label><input type="radio" name="priceRange" value="200_300" checked="@(Model.PriceRange == "200_300" ? "checked" : null)" /> 200 - 300 บาท</label>
+                    <label><input type="radio" name="priceRange" value="over_300" checked="@(Model.PriceRange == "over_300" ? "checked" : null)" /> มากกว่า 300 บาท</label>
                 </div>
 
-                <button type="button" class="filter-apply-button">ใช้ตัวกรอง</button>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="filter-apply-button">ใช้ตัวกรอง</button>
+                    <a asp-controller="BookCatalog" asp-action="Index" class="btn btn-outline-secondary">ล้างตัวกรอง</a>
+                </div>
             </div>
         </aside>
 
@@ -55,11 +62,11 @@
                 <p>แสดงผล @Model.Books.Count รายการ จากทั้งหมด @Model.TotalItems รายการ</p>
                 <div class="catalog-toolbar-controls">
                     <label for="sortBy">เรียงตาม</label>
-                    <select id="sortBy">
-                        <option>แนะนำสำหรับคุณ</option>
-                        <option>ราคาต่ำไปสูง</option>
-                        <option>ราคาสูงไปต่ำ</option>
-                        <option>มาใหม่ล่าสุด</option>
+                    <select id="sortBy" name="sortBy" onchange="this.form.submit()">
+                        <option value="recommended" selected="@(Model.SortBy == "recommended" ? "selected" : null)">แนะนำสำหรับคุณ</option>
+                        <option value="price_asc" selected="@(Model.SortBy == "price_asc" ? "selected" : null)">ราคาต่ำไปสูง</option>
+                        <option value="price_desc" selected="@(Model.SortBy == "price_desc" ? "selected" : null)">ราคาสูงไปต่ำ</option>
+                        <option value="latest" selected="@(Model.SortBy == "latest" ? "selected" : null)">มาใหม่ล่าสุด</option>
                     </select>
                 </div>
             </div>
@@ -101,5 +108,5 @@
                 }
             </div>
         </div>
-    </div>
+    </form>
 </section>

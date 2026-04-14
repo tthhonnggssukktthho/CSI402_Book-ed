@@ -110,8 +110,24 @@ public class ShippingController : Controller
             return NotFound();
         }
 
+        var isCarrierLocked = !string.IsNullOrWhiteSpace(shipment.CarrierName);
+
+        if (isCarrierLocked)
+        {
+            var postedCarrier = (model.CarrierName ?? string.Empty).Trim();
+            ModelState.Remove(nameof(model.CarrierName));
+            if (!string.IsNullOrWhiteSpace(postedCarrier) &&
+                !string.Equals(postedCarrier, shipment.CarrierName, StringComparison.Ordinal))
+            {
+                ModelState.AddModelError(nameof(model.CarrierName), "บริษัทขนส่งถูกตั้งค่าแล้วและไม่สามารถแก้ไขซ้ำได้");
+            }
+
+            model.CarrierName = shipment.CarrierName ?? string.Empty;
+        }
+
         model.CarrierOptions = BuildCarrierOptions();
         model.StatusOptions = BuildStatusOptions();
+        model.IsCarrierLocked = isCarrierLocked;
 
         if (!ModelState.IsValid)
         {
@@ -121,7 +137,10 @@ public class ShippingController : Controller
         var now = DateTime.Now;
         var employeeId = GetCurrentEmployeeId();
 
-        shipment.CarrierName = model.CarrierName.Trim();
+        if (!isCarrierLocked)
+        {
+            shipment.CarrierName = model.CarrierName.Trim();
+        }
         shipment.TrackingNo = model.TrackingNo.Trim();
         shipment.ShipmentStatus = model.ShipmentStatus;
         shipment.PackedByEmployeeId = employeeId;
@@ -177,6 +196,7 @@ public class ShippingController : Controller
             ShipmentId = shipment.ShipmentId,
             OrderNo = shipment.Order.OrderNo,
             CurrentStatus = shipment.ShipmentStatus,
+            IsCarrierLocked = !string.IsNullOrWhiteSpace(shipment.CarrierName),
             CarrierName = shipment.CarrierName ?? string.Empty,
             TrackingNo = shipment.TrackingNo ?? string.Empty,
             ShipmentStatus = shipment.ShipmentStatus,

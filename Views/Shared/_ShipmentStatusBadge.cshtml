@@ -1,0 +1,15 @@
+@model string
+@{
+    var status = (Model ?? string.Empty).Trim().ToLowerInvariant();
+    var (label, cssClass) = status switch
+    {
+        "waiting_payment_verification" => ("รอการยืนยันชำระเงิน", "bg-secondary"),
+        "waiting_to_pack" => ("รอแพ็ก", "bg-warning text-dark"),
+        "packed" => ("แพ็กแล้ว", "bg-info text-dark"),
+        "shipped" => ("จัดส่งแล้ว", "bg-primary"),
+        "delivered" => ("ส่งสำเร็จแล้ว", "bg-success"),
+        _ => (string.IsNullOrWhiteSpace(status) ? "ไม่ระบุ" : status, "bg-secondary")
+    };
+}
+
+<span class="badge @cssClass">@label</span>

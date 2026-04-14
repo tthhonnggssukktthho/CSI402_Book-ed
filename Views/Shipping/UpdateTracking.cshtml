@@ -45,9 +45,18 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label asp-for="CarrierName" class="form-label">บริษัทขนส่ง</label>
-                                <select asp-for="CarrierName" asp-items="Model.CarrierOptions" class="form-select">
-                                    <option value="">เลือกบริษัทขนส่ง</option>
-                                </select>
+                                @if (Model.IsCarrierLocked)
+                                {
+                                    <input asp-for="CarrierName" class="form-control" readonly />
+                                    <input asp-for="CarrierName" type="hidden" />
+                                    <div class="form-text">บริษัทขนส่งถูกบันทึกแล้วและแก้ไขไม่ได้</div>
+                                }
+                                else
+                                {
+                                    <select asp-for="CarrierName" asp-items="Model.CarrierOptions" class="form-select">
+                                        <option value="">เลือกบริษัทขนส่ง</option>
+                                    </select>
+                                }
                                 <span asp-validation-for="CarrierName" class="text-danger"></span>
                             </div>
 

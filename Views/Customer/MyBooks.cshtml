@@ -9,7 +9,7 @@
         <div>
             <p class="customer-books-kicker">My Books</p>
             <h1 class="customer-books-title">คลังหนังสือของฉัน</h1>
-            <p class="customer-books-subtitle">สลับดูได้ทั้งหนังสือที่คุณซื้อแล้ว และหนังสือที่คุณส่งเข้ามาขาย โดยไม่ต้องเปลี่ยนหน้า</p>
+            <p class="customer-books-subtitle">สลับดูได้ทั้งหนังสือที่คุณซื้อแล้ว และหนังสือที่คุณส่งเข้ามาขาย</p>
         </div>
     </div>
 
@@ -31,55 +31,42 @@
         <div class="customer-books-panel-head">
             <div>
                 <h2>หนังสือที่ซื้อแล้ว</h2>
-                <p>ตัวอย่างโครงหน้าสำหรับแสดงรายการหนังสือที่ลูกค้าซื้อเรียบร้อยแล้ว</p>
+                <p>รายการหนังสือที่คุณสั่งซื้อและชำระเงินแล้ว</p>
             </div>
         </div>
 
         <div class="row g-4">
-            <aside class="col-lg-3">
-                <div class="customer-books-filter">
-                    <h3>ตัวกรอง</h3>
-                    <label><input type="checkbox" checked /> ซื้อภายใน 30 วัน</label>
-                    <label><input type="checkbox" /> พร้อมอ่านต่อ</label>
-                    <label><input type="checkbox" /> มีรีวิวจากร้าน</label>
-                </div>
-            </aside>
-
-            <div class="col-lg-9">
-                <div class="customer-books-grid">
-                    <article class="customer-book-card">
-                        <div class="customer-book-cover customer-book-cover-purchased">ซื้อแล้ว</div>
-                        <div class="customer-book-body">
-                            <p class="customer-book-type">Purchased</p>
-                            <h3>เกิดใหม่อีกครั้ง ฉันก็ยังเป็นเจ้าหญิง</h3>
-                            <p>ผู้แต่ง: Example Author</p>
-                            <p>วันที่ซื้อ: 2026-03-18</p>
-                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
-                        </div>
-                    </article>
-
-                    <article class="customer-book-card">
-                        <div class="customer-book-cover customer-book-cover-purchased">ซื้อแล้ว</div>
-                        <div class="customer-book-body">
-                            <p class="customer-book-type">Purchased</p>
-                            <h3>แฟ้มคดีห้องสมุดปิดตาย</h3>
-                            <p>ผู้แต่ง: Mystery Writer</p>
-                            <p>วันที่ซื้อ: 2026-02-28</p>
-                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
-                        </div>
-                    </article>
-
-                    <article class="customer-book-card">
-                        <div class="customer-book-cover customer-book-cover-purchased">ซื้อแล้ว</div>
-                        <div class="customer-book-body">
-                            <p class="customer-book-type">Purchased</p>
-                            <h3>บทกวีใต้แสงจันทร์</h3>
-                            <p>ผู้แต่ง: Moonlight Press</p>
-                            <p>วันที่ซื้อ: 2026-01-09</p>
-                            <a href="#" class="customer-book-link">ดูรายละเอียด</a>
-                        </div>
-                    </article>
-                </div>
+            <div class="col-12">
+                @if (Model.PurchasedBooks.Any())
+                {
+                    <div class="customer-books-grid">
+                        @foreach (var book in Model.PurchasedBooks)
+                        {
+                            <article class="customer-book-card">
+                                <div class="customer-book-cover customer-book-cover-purchased" style="background-image: linear-gradient(135deg, rgba(105,151,203,.85), rgba(173,216,230,.85)), url('@book.ImageUrl'); background-size: cover; background-position: center;">
+                                    <span>ซื้อแล้ว</span>
+                                </div>
+                                <div class="customer-book-body">
+                                    <p class="customer-book-type">Purchased</p>
+                                    <h3>@book.Title</h3>
+                                    <p>ซีรีส์: @(string.IsNullOrWhiteSpace(book.SeriesName) ? "-" : book.SeriesName)</p>
+                                    <p>สภาพ: @book.ConditionCode</p>
+                                    <p>ราคา: ฿@book.NetAmount.ToString("N2")</p>
+                                    <p>วันที่ซื้อ: @book.PurchasedAt.ToString("yyyy-MM-dd")</p>
+                                    <p>สถานะคำสั่งซื้อ: @book.OrderStatus</p>
+                                    <a asp-controller="Order" asp-action="Detail" asp-route-id="@book.OrderId" class="customer-book-link">ดูคำสั่งซื้อ @book.OrderNo</a>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="customer-books-empty">
+                        <h3>ยังไม่มีหนังสือที่ซื้อแล้ว</h3>
+                        <p>เมื่อคุณซื้อหนังสือสำเร็จ รายการจะแสดงในหน้านี้อัตโนมัติ</p>
+                    </div>
+                }
             </div>
         </div>
     </div>
@@ -96,16 +83,7 @@
         </div>
 
         <div class="row g-4">
-            <aside class="col-lg-3">
-                <div class="customer-books-filter">
-                    <h3>ตัวกรอง</h3>
-                    <label><input type="checkbox" checked /> รอประเมิน</label>
-                    <label><input type="checkbox" /> อนุมัติแล้ว</label>
-                    <label><input type="checkbox" /> ขายสำเร็จ</label>
-                </div>
-            </aside>
-
-            <div class="col-lg-9">
+            <div class="col-12">
                 @if (Model.SellingBooks.Any())
                 {
                     <div class="customer-books-grid">
