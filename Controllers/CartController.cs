@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using _66014444_Project.Models;
+using _66014444_Project.Services;
 using _66014444_Project.ViewModels.Cart;
 
 namespace _66014444_Project.Controllers;
@@ -34,21 +35,25 @@ public class CartController : Controller
         var model = new CartViewModel
         {
             Items = items
-                .Select(item => new CartItemViewModel
+                .Select(item =>
                 {
-                    CartItemId = item.CartItemId,
-                    BookId = item.BookId,
-                    Title = item.Book.Title,
-                    SeriesName = item.Book.SeriesName,
-                    VolumeNo = item.Book.VolumeNo,
-                    ImageUrl = item.Book.ImageUrl,
-                    ConditionCode = item.Book.ConditionCode,
-                    UnitPrice = item.UnitPrice,
-                    ConditionDiscountPct = item.Book.ConditionDiscountPct,
-                    FinalPrice = item.UnitPrice * (1 - (item.Book.ConditionDiscountPct / 100m)),
-                    SaleStatus = item.Book.SaleStatus,
-                    IsAvailable = !string.Equals(item.Book.SaleStatus, "sold", StringComparison.OrdinalIgnoreCase),
-                    AddedAt = item.AddedAt
+                    var conditionDiscountPct = ConditionDiscountHelper.ResolvePercent(item.Book.ConditionCode, item.Book.ConditionDiscountPct);
+                    return new CartItemViewModel
+                    {
+                        CartItemId = item.CartItemId,
+                        BookId = item.BookId,
+                        Title = item.Book.Title,
+                        SeriesName = item.Book.SeriesName,
+                        VolumeNo = item.Book.VolumeNo,
+                        ImageUrl = item.Book.ImageUrl,
+                        ConditionCode = item.Book.ConditionCode,
+                        UnitPrice = item.UnitPrice,
+                        ConditionDiscountPct = conditionDiscountPct,
+                        FinalPrice = item.UnitPrice * (1 - (conditionDiscountPct / 100m)),
+                        SaleStatus = item.Book.SaleStatus,
+                        IsAvailable = !string.Equals(item.Book.SaleStatus, "sold", StringComparison.OrdinalIgnoreCase),
+                        AddedAt = item.AddedAt
+                    };
                 })
                 .ToList()
         };

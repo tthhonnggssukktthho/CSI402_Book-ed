@@ -1,0 +1,234 @@
+@model _66014444_Project.ViewModels.Finance.PromotionFormViewModel
+@{
+    ViewData["Title"] = "แก้ไข Flash Sale";
+    Layout = "_LayoutStaff";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="mb-1">แก้ไข Flash Sale</h2>
+            <p class="text-muted mb-0">ปรับรายละเอียดโปรโมชัน เงื่อนไขการใช้งาน และช่วงเวลาโปรโมชัน</p>
+        </div>
+        <a asp-controller="Promotion" asp-action="Index" class="btn btn-outline-secondary">กลับหน้าโปรโมชัน</a>
+    </div>
+
+    <form asp-controller="Promotion" asp-action="Edit" method="post" class="card shadow-sm border-0">
+        @Html.AntiForgeryToken()
+        <input asp-for="PromotionId" type="hidden" />
+        <div class="card-body p-4 p-lg-5">
+            <div class="row g-4">
+                <div class="col-lg-7">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="PromotionCode" class="form-label">รหัสโปรโมชัน</label>
+                            <input asp-for="PromotionCode" class="form-control" />
+                            <span asp-validation-for="PromotionCode" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PromotionName" class="form-label">ชื่อโปรโมชัน</label>
+                            <input asp-for="PromotionName" class="form-control" />
+                            <span asp-validation-for="PromotionName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label">คำอธิบาย</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="DiscountType" class="form-label">ประเภทส่วนลด</label>
+                            <select asp-for="DiscountType" class="form-select">
+                                <option value="percent">เปอร์เซ็นต์</option>
+                                <option value="amount">จำนวนเงิน</option>
+                            </select>
+                            <span asp-validation-for="DiscountType" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="DiscountValue" class="form-label">มูลค่าส่วนลด</label>
+                            <input asp-for="DiscountValue" class="form-control" />
+                            <span asp-validation-for="DiscountValue" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="IsActive" class="form-label">สถานะ</label>
+                            <div class="form-check form-switch pt-2">
+                                <input asp-for="IsActive" class="form-check-input" />
+                                <label asp-for="IsActive" class="form-check-label">เปิดใช้งาน</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="MinOrderAmount" class="form-label">ราคาขั้นต่ำ</label>
+                            <input asp-for="MinOrderAmount" class="form-control" />
+                            <span asp-validation-for="MinOrderAmount" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="MinItemQty" class="form-label">จำนวนหนังสือขั้นต่ำ</label>
+                            <input asp-for="MinItemQty" class="form-control" />
+                            <span asp-validation-for="MinItemQty" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="StartAt" class="form-label">เริ่มต้น</label>
+                            <input asp-for="StartAt" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="StartAt" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EndAt" class="form-label">สิ้นสุด</label>
+                            <input asp-for="EndAt" asp-format="{0:yyyy-MM-ddTHH:mm}" type="datetime-local" class="form-control" />
+                            <span asp-validation-for="EndAt" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="RuleType" class="form-label">ประเภทเงื่อนไข</label>
+                            <select asp-for="RuleType" class="form-select" data-rule-type-select>
+                                <option value="series_name">ชุดนิยาย</option>
+                                <option value="book_id">หนังสือเฉพาะเล่ม</option>
+                                <option value="category_name">หมวดหมู่หนังสือ</option>
+                            </select>
+                            <div class="form-text">เลือกเพียงหนึ่งประเภทเงื่อนไขสำหรับโปรโมชันนี้</div>
+                            <span asp-validation-for="RuleType" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="RuleOperator" class="form-label">ตัวดำเนินการ</label>
+                            <select asp-for="RuleOperator" class="form-select">
+                                <option value="equals">เท่ากับ</option>
+                            </select>
+                            <span asp-validation-for="RuleOperator" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12" data-rule-block="series_name">
+                            <label asp-for="SelectedSeriesName" class="form-label">ค้นหาและเลือกชุดนิยาย</label>
+                            <input asp-for="SelectedSeriesName" class="form-control" list="promotion-series-list" placeholder="พิมพ์ชื่อชุดนิยายเพื่อค้นหา" />
+                            <datalist id="promotion-series-list">
+                                @foreach (var item in Model.AvailableSeriesNames)
+                                {
+                                    <option value="@item"></option>
+                                }
+                            </datalist>
+                            <span asp-validation-for="SelectedSeriesName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 d-none" data-rule-block="book_id">
+                            <label asp-for="TargetBookId" class="form-label">เลือกหนังสือ</label>
+                            <select asp-for="TargetBookId" class="form-select">
+                                <option value="">เลือกหนังสือ</option>
+                                @foreach (var book in Model.AvailableBooks)
+                                {
+                                    <option value="@book.BookId">@book.Title (@book.SeriesName)</option>
+                                }
+                            </select>
+                            <span asp-validation-for="TargetBookId" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-12 d-none" data-rule-block="category_name">
+                            <label asp-for="TargetCategoryName" class="form-label">เลือกหมวดหมู่</label>
+                            <select asp-for="TargetCategoryName" class="form-select">
+                                <option value="">เลือกหมวดหมู่</option>
+                                @foreach (var category in Model.AvailableCategoryNames)
+                                {
+                                    <option value="@category">@category</option>
+                                }
+                            </select>
+                            <span asp-validation-for="TargetCategoryName" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="CreatedByEmployeeName" class="form-label">ผู้สร้างโปรโมชัน</label>
+                            <input asp-for="CreatedByEmployeeName" class="form-control" readonly />
+                            <input asp-for="CreatedByEmployeeId" type="hidden" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="RuleValue" class="form-label">ค่าเงื่อนไขที่บันทึก</label>
+                            <input asp-for="RuleValue" class="form-control" readonly />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="border rounded-3 p-4 h-100 bg-light">
+                        <h4 class="mb-3">หนังสือและชุดนิยายในระบบ</h4>
+                        <input type="text" class="form-control mb-3" placeholder="ค้นหาจากชื่อชุดนิยายหรือชื่อเรื่อง" data-series-search />
+                        <div class="d-grid gap-2" style="max-height: 420px; overflow:auto;">
+                            @foreach (var book in Model.AvailableBooks)
+                            {
+                                <div class="border rounded-3 bg-white p-3" data-series-item data-series-name="@book.SeriesName.ToLowerInvariant()" data-book-title="@book.Title.ToLowerInvariant()">
+                                    <div class="fw-semibold">@book.Title</div>
+                                    <div class="small text-muted">@book.SeriesName @(string.IsNullOrWhiteSpace(book.VolumeNo) ? "" : $"เล่ม {book.VolumeNo}")</div>
+                                    <div class="small text-muted">@book.CategoryName</div>
+                                    <div class="small text-success">@(book.ApprovedPrice?.ToString("N2") ?? "-") บาท</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 pt-4">
+                <a asp-controller="Promotion" asp-action="Index" class="btn btn-outline-secondary">กลับหน้าโปรโมชัน</a>
+                <button type="submit" class="btn btn-primary">บันทึกการแก้ไข</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const searchInput = document.querySelector("[data-series-search]");
+            const items = Array.from(document.querySelectorAll("[data-series-item]"));
+            const ruleTypeSelect = document.querySelector("[data-rule-type-select]");
+            const ruleValueInput = document.getElementById("RuleValue");
+            const seriesInput = document.getElementById("SelectedSeriesName");
+            const bookInput = document.getElementById("TargetBookId");
+            const categoryInput = document.getElementById("TargetCategoryName");
+
+            if (searchInput && items.length) {
+                searchInput.addEventListener("input", () => {
+                    const keyword = searchInput.value.trim().toLowerCase();
+                    items.forEach(item => {
+                        const series = item.getAttribute("data-series-name") || "";
+                        const title = item.getAttribute("data-book-title") || "";
+                        item.classList.toggle("d-none", keyword.length > 0 && !series.includes(keyword) && !title.includes(keyword));
+                    });
+                });
+            }
+
+            const syncRuleValue = () => {
+                if (!ruleTypeSelect || !ruleValueInput) return;
+                if (ruleTypeSelect.value === "series_name") {
+                    ruleValueInput.value = seriesInput?.value ?? "";
+                } else if (ruleTypeSelect.value === "book_id") {
+                    ruleValueInput.value = bookInput?.value ?? "";
+                } else if (ruleTypeSelect.value === "category_name") {
+                    ruleValueInput.value = categoryInput?.value ?? "";
+                }
+            };
+
+            const setBlockEnabled = (block, enabled) => {
+                block.classList.toggle("d-none", !enabled);
+                block.querySelectorAll("input, select, textarea").forEach(control => {
+                    if (control === ruleValueInput) return;
+                    control.disabled = !enabled;
+                });
+            };
+
+            const updateRuleBlocks = () => {
+                if (!ruleTypeSelect) return;
+                document.querySelectorAll("[data-rule-block]").forEach(block => {
+                    const isActive = block.getAttribute("data-rule-block") === ruleTypeSelect.value;
+                    setBlockEnabled(block, isActive);
+                });
+                syncRuleValue();
+            };
+
+            ruleTypeSelect?.addEventListener("change", updateRuleBlocks);
+            seriesInput?.addEventListener("input", syncRuleValue);
+            bookInput?.addEventListener("change", syncRuleValue);
+            categoryInput?.addEventListener("change", syncRuleValue);
+            updateRuleBlocks();
+        })();
+    </script>
+}

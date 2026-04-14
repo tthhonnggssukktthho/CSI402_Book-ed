@@ -12,25 +12,27 @@ public class CheckoutViewModel
     public string? PostalCode { get; set; }
 
     public List<CheckoutItemViewModel> Items { get; set; } = new();
+    public List<CheckoutAutomaticPromotionViewModel> AutomaticPromotions { get; set; } = new();
+    public List<CheckoutPromotionViewModel> Promotions { get; set; } = new();
 
-    public string? PromotionCode { get; set; }
-    public int? AppliedPromotionId { get; set; }
+    public int? SelectedPromotionId { get; set; }
     public string? AppliedPromotionName { get; set; }
     public string? PromotionErrorMessage { get; set; }
-    public List<CheckoutPromotionViewModel> Promotions { get; set; } = new();
 
     public int AvailablePoints { get; set; }
     public int MaxPointsToUse { get; set; }
-    public bool UsePoints { get; set; }
     public int PointsToUse { get; set; }
     public decimal PointsDiscountAmount { get; set; }
 
     public decimal SubtotalAmount { get; set; }
     public decimal ConditionDiscountAmount { get; set; }
     public decimal PromotionDiscountAmount { get; set; }
+    public decimal AutoPromotionDiscountAmount { get; set; }
+    public decimal SelectedPromotionDiscountAmount { get; set; }
     public decimal ShippingFee { get; set; }
     public decimal TotalAmount { get; set; }
     public int PointsToEarn { get; set; }
+
     public bool HasShippingAddress =>
         !string.IsNullOrWhiteSpace(ReceiverName) &&
         !string.IsNullOrWhiteSpace(ReceiverPhone) &&
@@ -54,6 +56,14 @@ public class CheckoutItemViewModel
     public string? ImageUrl { get; set; }
 }
 
+public class CheckoutAutomaticPromotionViewModel
+{
+    public string Title { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public decimal DiscountAmount { get; set; }
+    public bool IsApplied { get; set; }
+}
+
 public class CheckoutPromotionViewModel
 {
     public int PromotionId { get; set; }
@@ -64,4 +74,10 @@ public class CheckoutPromotionViewModel
     public string? DiscountType { get; set; }
     public decimal? DiscountValue { get; set; }
     public decimal? MinOrderAmount { get; set; }
+    public int? MinItemQty { get; set; }
+    public string? TargetSeriesName { get; set; }
+    public string RuleLabel { get; set; } = string.Empty;
+    public bool IsEligible { get; set; }
+    public decimal CalculatedDiscountAmount { get; set; }
+    public bool IsSelected { get; set; }
 }

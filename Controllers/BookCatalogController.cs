@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using _66014444_Project.Models;
+using _66014444_Project.Services;
 using _66014444_Project.ViewModels.BookCatalog;
 
 namespace _66014444_Project.Controllers;
@@ -50,6 +51,7 @@ public class BookCatalogController : Controller
         }
 
         var approvedPrice = book.ApprovedPrice ?? 0m;
+        var conditionDiscountPct = ConditionDiscountHelper.ResolvePercent(book.ConditionCode, book.ConditionDiscountPct);
         var model = new BookDetailViewModel
         {
             BookId = book.BookId,
@@ -68,10 +70,10 @@ public class BookCatalogController : Controller
             ImageUrl3 = book.ImageUrl3,
             ImageUrl4 = book.ImageUrl4,
             ConditionCode = book.ConditionCode,
-            ConditionDiscountPct = book.ConditionDiscountPct,
+            ConditionDiscountPct = conditionDiscountPct,
             ConditionNote = book.ConditionNote,
             ApprovedPrice = approvedPrice,
-            FinalPrice = approvedPrice * (1 - (book.ConditionDiscountPct / 100m)),
+            FinalPrice = approvedPrice * (1 - (conditionDiscountPct / 100m)),
             SaleStatus = book.SaleStatus,
             CanAddToCart = !string.Equals(book.SaleStatus, "sold", StringComparison.OrdinalIgnoreCase)
         };
@@ -82,6 +84,7 @@ public class BookCatalogController : Controller
     private static BookCardViewModel MapBookCard(Book book)
     {
         var approvedPrice = book.ApprovedPrice ?? 0m;
+        var conditionDiscountPct = ConditionDiscountHelper.ResolvePercent(book.ConditionCode, book.ConditionDiscountPct);
 
         return new BookCardViewModel
         {
@@ -93,9 +96,9 @@ public class BookCatalogController : Controller
             CategoryName = book.CategoryName,
             ImageUrl = book.ImageUrl,
             ConditionCode = book.ConditionCode,
-            ConditionDiscountPct = book.ConditionDiscountPct,
+            ConditionDiscountPct = conditionDiscountPct,
             ApprovedPrice = approvedPrice,
-            FinalPrice = approvedPrice * (1 - (book.ConditionDiscountPct / 100m)),
+            FinalPrice = approvedPrice * (1 - (conditionDiscountPct / 100m)),
             ConditionNote = book.ConditionNote
         };
     }

@@ -9,7 +9,7 @@
         <div>
             <p class="catalog-kicker">Checkout</p>
             <h1>ตรวจสอบคำสั่งซื้อ</h1>
-            <p class="catalog-subtitle">ยืนยันที่อยู่ โปรโมชัน และรายการหนังสือก่อนดำเนินการชำระเงิน</p>
+            <p class="catalog-subtitle">ยืนยันที่อยู่ ส่วนลด โปรโมชัน และรายการหนังสือก่อนดำเนินการชำระเงิน</p>
         </div>
         <div class="catalog-summary">
             <strong>@Model.Items.Count</strong>
@@ -17,198 +17,258 @@
         </div>
     </div>
 
-    <div class="d-flex flex-column gap-4">
-        <div class="filter-card">
-            <h2>1. ที่อยู่จัดส่ง</h2>
-            @if (Model.HasShippingAddress)
-            {
-                <div class="mb-2"><strong>@Model.ReceiverName</strong></div>
-                <div>@Model.ReceiverPhone</div>
-                <div>@Model.AddressLine1</div>
-                @if (!string.IsNullOrWhiteSpace(Model.AddressLine2))
-                {
-                    <div>@Model.AddressLine2</div>
-                }
-                <div>@Model.Subdistrict @Model.District</div>
-                <div>@Model.Province @Model.PostalCode</div>
-            }
-            else
-            {
-                <p class="text-muted mb-3">ยังไม่มีข้อมูลที่อยู่จัดส่งในโปรไฟล์</p>
-                <a asp-controller="Customer" asp-action="Profile" class="book-card-button">ไปกรอกที่อยู่ในโปรไฟล์</a>
-            }
-        </div>
+    <form asp-controller="Payment" asp-action="Index" method="post" id="checkoutForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" id="PointsToUse" name="pointsToUse" value="@Model.PointsToUse" />
 
-        <div class="filter-card">
-            <h2>2. โปรโมชัน</h2>
-            @if (Model.Promotions.Count == 0)
-            {
-                <p class="text-muted mb-0">ยังไม่มีโปรโมชันที่ใช้งานได้ในขณะนี้</p>
-            }
-            else
-            {
-                <div class="d-flex flex-column gap-3">
-                    @foreach (var promotion in Model.Promotions)
+        <div class="d-flex flex-column gap-4">
+            <div class="filter-card">
+                <h2>1. ที่อยู่จัดส่ง</h2>
+                @if (Model.HasShippingAddress)
+                {
+                    <div class="mb-2"><strong>@Model.ReceiverName</strong></div>
+                    <div>@Model.ReceiverPhone</div>
+                    <div>@Model.AddressLine1</div>
+                    @if (!string.IsNullOrWhiteSpace(Model.AddressLine2))
                     {
-                        <div class="border rounded-3 p-3">
-                            <div class="d-flex justify-content-between align-items-start gap-2">
-                                <div>
-                                    <div class="fw-semibold">@promotion.PromotionName</div>
-                                    <div class="small text-muted">@promotion.PromotionCode</div>
-                                </div>
-                                <span class="badge text-bg-light">@promotion.PromotionType</span>
-                            </div>
-                            <p class="mb-2 mt-2 small">@promotion.Description</p>
-                            <div class="small text-muted">
-                                ส่วนลด: @(promotion.DiscountValue?.ToString("0.##") ?? "-")
-                                @if (!string.IsNullOrWhiteSpace(promotion.DiscountType))
-                                {
-                                    <span>(@promotion.DiscountType)</span>
-                                }
-                            </div>
-                            @if (promotion.MinOrderAmount.HasValue)
-                            {
-                                <div class="small text-muted">ขั้นต่ำ ฿@promotion.MinOrderAmount.Value.ToString("0.##")</div>
-                            }
-                        </div>
+                        <div>@Model.AddressLine2</div>
                     }
-                </div>
-            }
-
-            <hr class="my-4" />
-
-            <h3 class="h5 mb-3">ใช้แต้มสะสม</h3>
-            <div class="border rounded-3 p-3">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>แต้มคงเหลือ</span>
-                    <strong>@Model.AvailablePoints แต้ม</strong>
-                </div>
-                <div class="small text-muted mb-3">ใช้ได้สูงสุด @Model.MaxPointsToUse แต้ม โดยคิด 1 แต้ม = 1 บาท</div>
-
-                @if (Model.MaxPointsToUse > 0)
-                {
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="usePointsToggle" />
-                        <label class="form-check-label" for="usePointsToggle">ใช้แต้มสะสมกับคำสั่งซื้อนี้</label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="pointsToUseInput" class="form-label">จำนวนแต้มที่ต้องการใช้</label>
-                        <input id="pointsToUseInput"
-                               class="form-control"
-                               type="number"
-                               min="0"
-                               max="@Model.MaxPointsToUse"
-                               value="0"
-                               disabled />
-                    </div>
+                    <div>@Model.Subdistrict @Model.District</div>
+                    <div>@Model.Province @Model.PostalCode</div>
                 }
                 else
                 {
-                    <div class="text-muted">แต้มสะสมยังไม่เพียงพอสำหรับการใช้งานในคำสั่งซื้อนี้</div>
+                    <p class="text-muted mb-3">ยังไม่มีข้อมูลที่อยู่จัดส่งในโปรไฟล์</p>
+                    <a asp-controller="Customer" asp-action="Profile" class="book-card-button">ไปกรอกที่อยู่ในโปรไฟล์</a>
                 }
             </div>
-        </div>
 
-        <div class="filter-card">
-            <h2>3. หนังสือและสรุปยอด</h2>
-            @if (Model.Items.Count == 0)
-            {
-                <p class="text-muted mb-3">ยังไม่มีสินค้าในตะกร้า</p>
-                <a asp-controller="Cart" asp-action="CartIndex" class="book-card-button">กลับไปที่ตะกร้า</a>
-            }
-            else
-            {
+            <div class="filter-card">
+                <h2>2. โปรโมชัน</h2>
+
                 <div class="d-flex flex-column gap-3 mb-4">
-                    @foreach (var item in Model.Items)
+                    @foreach (var promotion in Model.AutomaticPromotions)
                     {
-                        <div class="d-flex gap-3 align-items-start border-bottom pb-3">
-                            <div class="border rounded-3 overflow-hidden bg-light" style="width: 64px; height: 84px;">
-                                @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
-                                {
-                                    <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid w-100 h-100" style="object-fit: cover;" />
-                                }
+                        <div class="border rounded-3 p-3">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <div class="fw-semibold">@promotion.Title</div>
+                                    <div class="small text-muted">@promotion.Description</div>
+                                </div>
+                                <span class="badge @(promotion.IsApplied ? "bg-success" : "bg-secondary")">
+                                    @(promotion.IsApplied ? "ใช้งานแล้ว" : "ยังไม่เข้าเงื่อนไข")
+                                </span>
                             </div>
-                            <div class="flex-grow-1">
-                                <div class="fw-semibold">@item.Title</div>
-                                <div class="small text-muted">@item.SeriesName</div>
-                                <div class="small text-muted">@item.ConditionCode</div>
-                            </div>
-                            <div class="text-end">
-                                <div class="fw-semibold">฿@item.NetAmount.ToString("0.##")</div>
-                                <div class="small text-muted">จาก ฿@item.UnitPrice.ToString("0.##")</div>
-                            </div>
+                            <div class="small mt-2">มูลค่าส่วนลด: @promotion.DiscountAmount.ToString("N2") บาท</div>
                         </div>
                     }
                 </div>
 
-                <div class="d-flex justify-content-between mb-2">
-                    <span>ราคาหนังสือรวม</span>
-                    <span>฿@Model.SubtotalAmount.ToString("0.##")</span>
+                <hr class="my-4" />
+
+                <h3 class="h5 mb-3">Flash Sale ที่เลือกใช้ได้</h3>
+                @if (Model.Promotions.Count == 0)
+                {
+                    <p class="text-muted mb-4">ยังไม่มี Flash Sale ที่เปิดใช้งานอยู่ในขณะนี้</p>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        <label class="border rounded-3 p-3 @(Model.SelectedPromotionId is null ? "border-primary" : "")">
+                            <div class="form-check">
+                                <input class="form-check-input checkout-promotion-option" type="radio" name="selectedPromotionId" value="" @(Model.SelectedPromotionId is null ? "checked" : "") data-discount="0" />
+                                <span class="form-check-label fw-semibold">ไม่ใช้ Flash Sale</span>
+                            </div>
+                        </label>
+
+                        @foreach (var promotion in Model.Promotions)
+                        {
+                            <label class="border rounded-3 p-3 @(promotion.IsSelected ? "border-primary" : "") @(promotion.IsEligible ? "" : "opacity-50")">
+                                <div class="form-check">
+                                    <input class="form-check-input checkout-promotion-option"
+                                           type="radio"
+                                           name="selectedPromotionId"
+                                           value="@promotion.PromotionId"
+                                           @(promotion.IsSelected ? "checked" : "")
+                                           @(promotion.IsEligible ? "" : "disabled")
+                                           data-discount="@promotion.CalculatedDiscountAmount.ToString(System.Globalization.CultureInfo.InvariantCulture)" />
+                                    <span class="form-check-label fw-semibold">@promotion.PromotionName</span>
+                                </div>
+                                <div class="small text-muted mt-2">@promotion.PromotionCode</div>
+                                <div class="small mt-1">@promotion.Description</div>
+                                <div class="small text-muted mt-1">@promotion.RuleLabel</div>
+                                @if (promotion.MinOrderAmount.HasValue)
+                                {
+                                    <div class="small text-muted">ราคาขั้นต่ำ @promotion.MinOrderAmount.Value.ToString("N2") บาท</div>
+                                }
+                                @if (promotion.MinItemQty.HasValue)
+                                {
+                                    <div class="small text-muted">จำนวนหนังสือขั้นต่ำ @promotion.MinItemQty.Value เล่ม</div>
+                                }
+                                <div class="small mt-2">ส่วนลดที่จะได้รับ: @promotion.CalculatedDiscountAmount.ToString("N2") บาท</div>
+                                @if (!promotion.IsEligible)
+                                {
+                                    <div class="small text-danger mt-1">ยังไม่เข้าเงื่อนไขสำหรับใช้งาน</div>
+                                }
+                            </label>
+                        }
+                    </div>
+                }
+
+                <hr class="my-4" />
+
+                <h3 class="h5 mb-3">ใช้แต้มสะสม</h3>
+                <div class="border rounded-3 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span>แต้มคงเหลือ</span>
+                        <strong>@Model.AvailablePoints แต้ม</strong>
+                    </div>
+                    <div class="small text-muted mb-3">ใช้ได้สูงสุด @Model.MaxPointsToUse แต้ม โดยคิด 1 แต้ม = 1 บาท</div>
+
+                    @if (Model.MaxPointsToUse > 0)
+                    {
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="usePointsToggle" @(Model.PointsToUse > 0 ? "checked" : "") />
+                            <label class="form-check-label" for="usePointsToggle">ใช้แต้มสะสมกับคำสั่งซื้อนี้</label>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="pointsToUseInput" class="form-label">จำนวนแต้มที่ต้องการใช้</label>
+                            <input id="pointsToUseInput"
+                                   class="form-control"
+                                   type="number"
+                                   min="0"
+                                   max="@Model.MaxPointsToUse"
+                                   value="@Model.PointsToUse" />
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-muted">แต้มสะสมยังไม่เพียงพอสำหรับใช้งานในคำสั่งซื้อนี้</div>
+                    }
                 </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>ส่วนลดตามสภาพ</span>
-                    <span>- ฿@Model.ConditionDiscountAmount.ToString("0.##")</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>ส่วนลดโปรโมชัน</span>
-                    <span id="promotionDiscountValue">- ฿@Model.PromotionDiscountAmount.ToString("0.##")</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>ส่วนลดจากแต้มสะสม</span>
-                    <span id="pointsDiscountValue">- ฿0</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span>ค่าจัดส่ง</span>
-                    <span id="shippingFeeValue">฿@Model.ShippingFee.ToString("0.##")</span>
-                </div>
-                <hr />
-                <div class="d-flex justify-content-between align-items-center">
-                    <strong>ยอดชำระทั้งหมด</strong>
-                    <strong class="fs-5 text-brown" id="checkoutTotalValue">฿@Model.TotalAmount.ToString("0.##")</strong>
-                </div>
-                <div class="pt-3 d-flex justify-content-end">
-                    <a asp-controller="Payment" asp-action="Index" class="book-card-button">ชำระเงิน</a>
-                </div>
-            }
+            </div>
+
+            <div class="filter-card">
+                <h2>3. หนังสือและสรุปยอด</h2>
+                @if (Model.Items.Count == 0)
+                {
+                    <p class="text-muted mb-3">ยังไม่มีสินค้าในตะกร้า</p>
+                    <a asp-controller="Cart" asp-action="CartIndex" class="book-card-button">กลับไปที่ตะกร้า</a>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3 mb-4">
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="d-flex gap-3 align-items-start border-bottom pb-3">
+                                <div class="border rounded-3 overflow-hidden bg-light" style="width: 64px; height: 84px;">
+                                    @if (!string.IsNullOrWhiteSpace(item.ImageUrl))
+                                    {
+                                        <img src="@item.ImageUrl" alt="@item.Title" class="img-fluid w-100 h-100" style="object-fit: cover;" />
+                                    }
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">@item.Title</div>
+                                    <div class="small text-muted">@item.SeriesName</div>
+                                    <div class="small text-muted">@item.ConditionCode</div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-semibold">@item.NetAmount.ToString("N2") บาท</div>
+                                    <div class="small text-muted">จาก @item.UnitPrice.ToString("N2") บาท</div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ราคาหนังสือรวม</span>
+                        <span>@Model.SubtotalAmount.ToString("N2") บาท</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ส่วนลดตามสภาพ</span>
+                        <span>- @Model.ConditionDiscountAmount.ToString("N2") บาท</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ส่วนลดโปรโมชันอัตโนมัติ</span>
+                        <span id="autoPromotionDiscountValue">- @Model.AutoPromotionDiscountAmount.ToString("N2") บาท</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ส่วนลด Flash Sale</span>
+                        <span id="selectedPromotionDiscountValue">- @Model.SelectedPromotionDiscountAmount.ToString("N2") บาท</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ส่วนลดจากแต้มสะสม</span>
+                        <span id="pointsDiscountValue">- @Model.PointsDiscountAmount.ToString("N2") บาท</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>ค่าจัดส่ง</span>
+                        <span id="shippingFeeValue">@Model.ShippingFee.ToString("N2") บาท</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>ยอดชำระทั้งหมด</strong>
+                        <strong class="fs-5 text-brown" id="checkoutTotalValue">@Model.TotalAmount.ToString("N2") บาท</strong>
+                    </div>
+                    <div class="pt-3 d-flex justify-content-end">
+                        <button type="submit" class="book-card-button">ชำระเงิน</button>
+                    </div>
+                }
+            </div>
         </div>
-    </div>
+    </form>
 </section>
 
 @section Scripts {
     <script>
         (() => {
+            const promotionOptions = Array.from(document.querySelectorAll(".checkout-promotion-option"));
             const usePointsToggle = document.getElementById("usePointsToggle");
             const pointsInput = document.getElementById("pointsToUseInput");
+            const pointsHidden = document.getElementById("PointsToUse");
+            const selectedPromotionDiscountValue = document.getElementById("selectedPromotionDiscountValue");
             const pointsDiscountValue = document.getElementById("pointsDiscountValue");
             const totalValue = document.getElementById("checkoutTotalValue");
 
-            if (!usePointsToggle || !pointsInput || !pointsDiscountValue || !totalValue) {
+            if (!selectedPromotionDiscountValue || !pointsDiscountValue || !totalValue || !pointsHidden) {
                 return;
             }
 
-            const baseTotal = @Model.TotalAmount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            const baseTotalWithoutSelectedPromotionOrPoints = @((Model.TotalAmount + Model.PointsDiscountAmount + Model.SelectedPromotionDiscountAmount).ToString(System.Globalization.CultureInfo.InvariantCulture));
             const maxPoints = @Model.MaxPointsToUse;
 
-            const render = () => {
-                pointsInput.disabled = !usePointsToggle.checked;
+            const getSelectedPromotionDiscount = () => {
+                const selected = promotionOptions.find(option => option.checked);
+                return selected ? Number(selected.dataset.discount || 0) : 0;
+            };
 
-                let points = Number(pointsInput.value || 0);
-                if (!usePointsToggle.checked) {
+            const render = () => {
+                const promotionDiscount = getSelectedPromotionDiscount();
+
+                let points = Number(pointsInput?.value || 0);
+                if (!usePointsToggle?.checked) {
                     points = 0;
                 }
 
                 if (points < 0) points = 0;
                 if (points > maxPoints) points = maxPoints;
-                pointsInput.value = points;
 
-                const total = Math.max(0, baseTotal - points);
-                pointsDiscountValue.textContent = `- ฿${points.toFixed(0)}`;
-                totalValue.textContent = `฿${total.toFixed(2).replace(/\.00$/, "")}`;
+                if (pointsInput) {
+                    pointsInput.value = points;
+                    pointsInput.disabled = !(usePointsToggle?.checked);
+                }
+
+                pointsHidden.value = points.toString();
+
+                const total = Math.max(0, baseTotalWithoutSelectedPromotionOrPoints - promotionDiscount - points);
+                selectedPromotionDiscountValue.textContent = `- ${promotionDiscount.toFixed(2)} บาท`;
+                pointsDiscountValue.textContent = `- ${points.toFixed(2)} บาท`;
+                totalValue.textContent = `${total.toFixed(2)} บาท`;
             };
 
-            usePointsToggle.addEventListener("change", render);
-            pointsInput.addEventListener("input", render);
+            promotionOptions.forEach(option => option.addEventListener("change", render));
+            usePointsToggle?.addEventListener("change", render);
+            pointsInput?.addEventListener("input", render);
             render();
         })();
     </script>

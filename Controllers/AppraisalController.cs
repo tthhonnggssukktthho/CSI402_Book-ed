@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using _66014444_Project.Models;
+using _66014444_Project.Services;
 using _66014444_Project.ViewModels.Appraisal;
 
 namespace _66014444_Project.Controllers;
@@ -209,6 +210,7 @@ public class AppraisalController : Controller
         book.Synopsis = model.Synopsis;
         book.BookDescription = model.BookDescription;
         book.ConditionCode = model.ConditionCode;
+        book.ConditionDiscountPct = ConditionDiscountHelper.ResolvePercent(model.ConditionCode);
         book.ConditionNote = model.ConditionNote;
         book.ProposedPrice = model.ProposedPrice;
         book.ApprovedPrice = model.ApprovedPrice;

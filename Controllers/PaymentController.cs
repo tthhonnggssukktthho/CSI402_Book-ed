@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using _66014444_Project.Models;
+using _66014444_Project.Services;
 using _66014444_Project.ViewModels.Payment;
 
 namespace _66014444_Project.Controllers;
@@ -23,7 +24,9 @@ public class PaymentController : Controller
         return RedirectToAction(nameof(Upload));
     }
 
-    public IActionResult Upload()
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Index(int? selectedPromotionId, int pointsToUse = 0)
     {
         var customerId = GetCurrentCustomerId();
         if (!customerId.HasValue)
@@ -31,7 +34,34 @@ public class PaymentController : Controller
             return Challenge();
         }
 
-        var order = EnsurePendingOrder(customerId.Value);
+        var order = EnsurePendingOrder(customerId.Value, selectedPromotionId, pointsToUse);
+        if (order is null)
+        {
+            TempData["CartSuccess"] = "ยังไม่มีสินค้าในตะกร้าสำหรับสร้างคำสั่งซื้อ";
+            return RedirectToAction("CartIndex", "Cart");
+        }
+
+        return RedirectToAction(nameof(Upload), new { orderId = order.OrderId });
+    }
+
+    public IActionResult Upload(int? orderId = null)
+    {
+        var customerId = GetCurrentCustomerId();
+        if (!customerId.HasValue)
+        {
+            return Challenge();
+        }
+
+        Order? order;
+        if (orderId.HasValue)
+        {
+            order = _db.Orders.FirstOrDefault(o => o.OrderId == orderId.Value && o.CustomerId == customerId.Value);
+        }
+        else
+        {
+            order = EnsurePendingOrder(customerId.Value, null, 0);
+        }
+
         if (order is null)
         {
             TempData["CartSuccess"] = "ยังไม่มีสินค้าในตะกร้าสำหรับสร้างคำสั่งซื้อ";
@@ -153,7 +183,7 @@ public class PaymentController : Controller
         return null;
     }
 
-    private Order? EnsurePendingOrder(int customerId)
+    private Order? EnsurePendingOrder(int customerId, int? selectedPromotionId, int pointsToUse)
     {
         var existingOrder = _db.Orders
             .Include(o => o.OrderItems)
@@ -177,11 +207,19 @@ public class PaymentController : Controller
 
         var now = DateTime.Now;
         var cartItems = customer.CartItems.ToList();
+        var promotions = _db.Promotions
+            .Include(p => p.PromotionRules)
+            .Where(p => p.IsActive == true &&
+                        p.StartAt <= now &&
+                        (p.EndAt == null || p.EndAt >= now))
+            .ToList();
 
-        var subtotal = cartItems.Sum(item => item.UnitPrice);
-        var conditionDiscount = cartItems.Sum(item => item.UnitPrice * (item.Book.ConditionDiscountPct / 100m));
-        var shippingFee = 50m;
-        var total = subtotal - conditionDiscount + shippingFee;
+        var pricing = CheckoutPricingCalculator.Calculate(
+            cartItems,
+            promotions,
+            customer.CurrentPoints,
+            selectedPromotionId,
+            pointsToUse);
 
         var order = new Order
         {
@@ -197,15 +235,15 @@ public class PaymentController : Controller
             SnapPostalCode = customer.PostalCode ?? "-",
             OrderStatus = "pending_payment",
             PreviousStatus = null,
-            SubtotalAmount = subtotal,
-            ConditionDiscountAmount = conditionDiscount,
-            PromotionDiscountAmount = 0m,
-            PointsDiscountAmount = 0m,
-            ShippingFee = shippingFee,
-            TotalAmount = total,
-            PointsEarned = (int)Math.Floor(total / 100m),
-            PointsUsed = 0,
-            PromotionId = null,
+            SubtotalAmount = pricing.SubtotalAmount,
+            ConditionDiscountAmount = pricing.ConditionDiscountAmount,
+            PromotionDiscountAmount = pricing.PromotionDiscountAmount,
+            PointsDiscountAmount = pricing.PointsDiscountAmount,
+            ShippingFee = pricing.ShippingFee,
+            TotalAmount = pricing.TotalAmount,
+            PointsEarned = pricing.PointsToEarn,
+            PointsUsed = pricing.PointsToUse,
+            PromotionId = pricing.SelectedPromotionId,
             PaymentDueAt = now.AddHours(24),
             CreatedAt = now,
             UpdatedAt = now
@@ -216,7 +254,8 @@ public class PaymentController : Controller
 
         foreach (var cartItem in cartItems)
         {
-            var discountAmount = cartItem.UnitPrice * (cartItem.Book.ConditionDiscountPct / 100m);
+            var conditionDiscountPct = ConditionDiscountHelper.ResolvePercent(cartItem.Book.ConditionCode, cartItem.Book.ConditionDiscountPct);
+            var discountAmount = cartItem.UnitPrice * (conditionDiscountPct / 100m);
             _db.OrderItems.Add(new OrderItem
             {
                 OrderId = order.OrderId,
