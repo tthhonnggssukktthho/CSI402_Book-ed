@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using _66014444_Project.Models;
@@ -162,6 +163,12 @@ public class AdminController : Controller
     [ValidateAntiForgeryToken]
     public IActionResult EmployeeCreate(AdminEmployeeFormViewModel model)
     {
+        var currentUserId = GetCurrentUserId();
+        if (!currentUserId.HasValue)
+        {
+            return Forbid();
+        }
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -226,6 +233,7 @@ public class AdminController : Controller
             Province = model.Province,
             PostalCode = model.PostalCode,
             ResignDate = model.EmploymentStatus == "resigned" ? model.ResignDate : null,
+            CreatedByAdminId = currentUserId.Value,
             CreatedAt = now,
             UpdatedAt = now
         };
@@ -390,6 +398,12 @@ public class AdminController : Controller
         }
 
         return $"{prefix}{nextNumber:0000}";
+    }
+
+    private int? GetCurrentUserId()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return int.TryParse(userIdClaim, out var userId) ? userId : null;
     }
 
     public IActionResult Privacy()

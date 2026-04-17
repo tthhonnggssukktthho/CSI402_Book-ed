@@ -125,6 +125,8 @@ public class FinanceController : Controller
             payment.Order.Shipment.UpdatedAt = now;
         }
 
+        ApplyPointTransactionsForApprovedOrder(payment.Order, now);
+
         _db.SaveChanges();
         TempData["FinanceSuccess"] = "อนุมัติการชำระเงินเรียบร้อยแล้ว";
         return RedirectToAction(nameof(OrderDetail), new { id = paymentId });
@@ -239,6 +241,44 @@ public class FinanceController : Controller
             VerifiedAt = payment.VerifiedAt,
             RejectReason = payment.RejectReason
         };
+    }
+
+    private void ApplyPointTransactionsForApprovedOrder(Order order, DateTime now)
+    {
+        var alreadyApplied = _db.PointTransactions
+            .Where(tx => tx.OrderId == order.OrderId)
+            .Select(tx => tx.TransactionType)
+            .ToList();
+
+        if (order.PointsUsed > 0 && !alreadyApplied.Contains("redeem"))
+        {
+            _db.PointTransactions.Add(new PointTransaction
+            {
+                CustomerId = order.CustomerId,
+                OrderId = order.OrderId,
+                TransactionType = "redeem",
+                Points = -order.PointsUsed,
+                Description = $"ใช้แต้มกับคำสั่งซื้อ {order.OrderNo}",
+                CreatedAt = now
+            });
+
+            order.Customer.CurrentPoints = Math.Max(0, order.Customer.CurrentPoints - order.PointsUsed);
+        }
+
+        if (order.PointsEarned > 0 && !alreadyApplied.Contains("earn"))
+        {
+            _db.PointTransactions.Add(new PointTransaction
+            {
+                CustomerId = order.CustomerId,
+                OrderId = order.OrderId,
+                TransactionType = "earn",
+                Points = order.PointsEarned,
+                Description = $"รับแต้มจากคำสั่งซื้อ {order.OrderNo}",
+                CreatedAt = now
+            });
+
+            order.Customer.CurrentPoints += order.PointsEarned;
+        }
     }
 
     private int? GetCurrentEmployeeId()
